@@ -9,6 +9,8 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   padding-bottom: 60px;
+  height: 100%;
+  background-color: white;
 `;
 
 export default GeneralWrapper;

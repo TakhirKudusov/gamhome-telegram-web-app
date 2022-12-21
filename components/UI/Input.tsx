@@ -3,11 +3,18 @@ import React from "react";
 
 type Props = {
   placeholder: string;
-  type: string;
+  onChangeHandler: (e: any) => void;
+  value: string;
 };
 
-const Input: React.FC<Props> = ({ placeholder, type }) => {
-  return <StyledInput placeholder={placeholder} type={type} />;
+const Input: React.FC<Props> = ({ placeholder, onChangeHandler, value }) => {
+  return (
+    <StyledInput
+      onChange={onChangeHandler}
+      placeholder={placeholder}
+      value={value}
+    />
+  );
 };
 
 const StyledInput = styled.input`

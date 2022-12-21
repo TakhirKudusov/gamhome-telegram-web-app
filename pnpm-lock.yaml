@@ -9,6 +9,7 @@ specifiers:
   '@types/styled-components': ^5.1.26
   axios: ^1.2.1
   http-proxy-middleware: ^2.0.6
+  immer: ^9.0.16
   next: 13.0.7
   next-redux-wrapper: ^8.0.0
   prettier: ^2.8.1
@@ -29,6 +30,7 @@ dependencies:
   '@types/styled-components': 5.1.26
   axios: 1.2.1
   http-proxy-middleware: 2.0.6
+  immer: 9.0.16
   next: 13.0.7_biqbaboplfbrettd7655fr4n2y
   next-redux-wrapper: 8.0.0_myptqhtrt2etn3bpvzs3slkaw4
   prettier: 2.8.1

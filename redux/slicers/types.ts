@@ -10,12 +10,13 @@ type FieldName =
   | "maxKmMetro"
   | "metros"
   | "districts"
-  | "parameters";
+  | "parameters"
+  | "fee";
 
 type FieldAction = {
   payload: {
     name: FieldName;
-    value: number | boolean | undefined;
+    value: string | number | boolean | undefined;
   };
   type: string;
 };
@@ -41,15 +42,16 @@ type Data = {
   isAgent?: boolean;
   category?: 2 | 3 | 4;
   type?: 1 | 2;
-  minPrice?: number;
-  maxPrice?: number;
+  minPrice?: string;
+  maxPrice?: string;
   city?: number;
   metros?: number[];
   districts?: number[];
   author?: 2 | 3;
   parameters?: number[];
-  minKmMetro?: number;
-  maxKmMetro?: number;
+  minKmMetro?: string;
+  maxKmMetro?: string;
+  fee?: boolean;
 };
 
 type TFormData = {
@@ -59,4 +61,4 @@ type TFormData = {
   isError: boolean;
 };
 
-export type { TFormData, FieldAction, City };
+export type { TFormData, FieldAction, City, FieldName };

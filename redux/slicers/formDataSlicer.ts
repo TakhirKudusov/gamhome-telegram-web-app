@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { City, FieldAction, TFormData } from "./types";
 import { axiosInstance } from "../../common/axiosInstance";
+import { handleNumFormat } from "./helpers";
 
 export const fetchCitiesData = createAsyncThunk<{ data: City[] }>(
   "formData/fetchCitiesData",
@@ -15,7 +16,12 @@ export const fetchCitiesData = createAsyncThunk<{ data: City[] }>(
 
 const initialState: TFormData = {
   citiesData: null,
-  data: {},
+  data: {
+    minPrice: "",
+    maxPrice: "",
+    minKmMetro: "",
+    maxKmMetro: "",
+  },
   isError: false,
   isLoading: false,
 };
@@ -25,6 +31,22 @@ const formDataSlicer = createSlice({
   initialState,
   reducers: {
     setPrimitiveField(state, action: FieldAction) {
+      if (
+        action.payload.name === "minPrice" ||
+        action.payload.name === "maxPrice"
+      ) {
+        handleNumFormat(state, action, 999_999_999, "999 999 999");
+        return;
+      }
+
+      if (
+        action.payload.name === "minKmMetro" ||
+        action.payload.name === "maxKmMetro"
+      ) {
+        handleNumFormat(state, action, 5_000, "5 000");
+        return;
+      }
+
       state.data[action.payload.name] = action.payload.value as any;
     },
     setComplexField(state, action: FieldAction) {
@@ -54,7 +76,6 @@ const formDataSlicer = createSlice({
       })
       .addCase(fetchCitiesData.fulfilled, (state, action) => {
         state.isLoading = false;
-        console.log(action.payload);
         state.citiesData = action.payload.data;
       })
       .addCase(fetchCitiesData.rejected, (state, action) => {
