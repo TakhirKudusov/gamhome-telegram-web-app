@@ -1,16 +1,17 @@
-import { createRef } from "react";
-import {
-  CostContainer,
-  Divider,
-  GeneralWrapper,
-  HeaderContainer,
-  Input,
-  SectionHeader,
-} from "../components/UI";
+import { createRef, useEffect } from "react";
+import { Divider, GeneralWrapper, HeaderContainer } from "../components/UI";
 import { Cost, TagsSection } from "../components/home_page";
 import { Ref } from "../common/types";
+import { fetchCitiesData } from "../redux/slicers/formDataSlicer";
+import { useAppDispatch } from "../redux/hooks";
 
 const Home = () => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchCitiesData());
+  }, []);
+
   const roomTagRef = createRef();
   const flatTagRef = createRef();
   const houseTagRef = createRef();
@@ -50,11 +51,11 @@ const Home = () => {
   const agentArr: Ref[] = [
     {
       ref: agentRef,
-      children: "Да",
+      children: "Агент",
     },
     {
       ref: notAgentRef,
-      children: "Нет",
+      children: "Собственник",
     },
   ];
 
@@ -66,7 +67,7 @@ const Home = () => {
       <Divider />
       <TagsSection refs={servTypeArr} header="Тип услуги" />
       <Divider />
-      <TagsSection refs={agentArr} header="Агент" />
+      <TagsSection refs={agentArr} header="Автор объявления" />
       <Divider />
       <Cost />
       <Divider />
