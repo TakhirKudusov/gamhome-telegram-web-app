@@ -1,21 +1,20 @@
 import React, { useEffect } from "react";
 import Title from "antd/lib/typography/Title";
-import { Button, Divider, Form, Input, Radio, Select } from "antd";
+import { Button, Divider, Form, Input, Radio, Select, Slider } from "antd";
 import {
   authorOptions,
   categoryOptions,
   typeOptions,
 } from "../common/constants";
 import styled from "styled-components";
+import { FieldName } from "../common/enums";
 
 const { Option } = Select;
 
 const Home = () => {
   const [form] = Form.useForm();
 
-  // useEffect(() => {
-  //   dispatch(fetchCitiesData());
-  // }, []);
+  useEffect(() => {}, []);
 
   return (
     <>
@@ -23,82 +22,50 @@ const Home = () => {
         <Title level={4}>Снять недвижимость</Title>
         <Divider />
         <Form form={form} layout="vertical" onFinish={(e) => console.log(e)}>
-          <Form.Item name="category" label="Тип жилья">
+          {/*______CATEGORY______*/}
+          <Form.Item name={FieldName.CATEGORY} label="Тип жилья">
             <Select options={categoryOptions} allowClear />
           </Form.Item>
           <Divider />
-          <Form.Item name="type" label="Тип услуги">
+          {/*______TYPE______*/}
+          <Form.Item name={FieldName.TYPE} label="Тип услуги">
             <Select options={typeOptions} allowClear />
           </Form.Item>
           <Divider />
-          <Form.Item name="author" label="Автор">
+          {/*______AUTHOR______*/}
+          <Form.Item name={FieldName.AUTHOR} label="Автор">
             <Select options={authorOptions} allowClear />
           </Form.Item>
           <Divider />
-          <Form.Item label="Стоимость ₽">
-            <Input.Group compact>
-              <Input
-                style={{ width: 100, textAlign: "center" }}
-                placeholder="От"
-              />
-              <Input
-                style={{
-                  width: 30,
-                  borderLeft: 0,
-                  borderRight: 0,
-                  pointerEvents: "none",
-                }}
-                placeholder="~"
-                disabled
-              />
-              <Input
-                style={{
-                  width: 100,
-                  textAlign: "center",
-                }}
-                placeholder="До"
-              />
-            </Input.Group>
+          {/*______CATEGORY______*/}
+          <Form.Item name={FieldName.PRICE} label="Стоимость ₽">
+            <Slider
+              range
+              min={0}
+              max={999_999_999}
+              defaultValue={[0, 999_999_999]}
+            />
           </Form.Item>
           <Divider />
-          <Form.Item label="Без комиссии">
+          {/*______FEE______*/}
+          <Form.Item label="Без комиссии" name={FieldName.FEE}>
             <Radio.Group buttonStyle="solid">
               <Radio.Button value="true">Да</Radio.Button>
               <Radio.Button value="false">Нет</Radio.Button>
             </Radio.Group>
           </Form.Item>
           <Divider />
-          <Form.Item label="Являетесь агентом?">
+          {/*______IS_AGENT______*/}
+          <Form.Item label="Являетесь агентом?" name={FieldName.IS_AGENT}>
             <Radio.Group buttonStyle="solid">
               <Radio.Button value="true">Да</Radio.Button>
               <Radio.Button value="false">Нет</Radio.Button>
             </Radio.Group>
           </Form.Item>
           <Divider />
-          <Form.Item label="Расстояние до метро, км">
-            <Input.Group compact>
-              <Input
-                style={{ width: 100, textAlign: "center" }}
-                placeholder="От"
-              />
-              <Input
-                style={{
-                  width: 30,
-                  borderLeft: 0,
-                  borderRight: 0,
-                  pointerEvents: "none",
-                }}
-                placeholder="~"
-                disabled
-              />
-              <Input
-                style={{
-                  width: 100,
-                  textAlign: "center",
-                }}
-                placeholder="До"
-              />
-            </Input.Group>
+          {/*______KM_METRO______*/}
+          <Form.Item label="Расстояние до метро, км" name={FieldName.KM_METRO}>
+            <Slider range min={0} max={5_000} defaultValue={[0, 5_000]} />
           </Form.Item>
           <Divider />
           <Form.Item>
