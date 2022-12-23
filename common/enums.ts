@@ -6,6 +6,7 @@ enum FieldName {
   CITY = "city",
   AUTHOR = "author",
   KM_METRO = "kmMetro",
+  METRO_LINES = "metroLines",
   METROS = "metros",
   DISTRICTS = "districts",
   PARAMETERS = "parameters",

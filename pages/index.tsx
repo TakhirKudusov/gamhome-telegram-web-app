@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Title from "antd/lib/typography/Title";
-import { Button, Divider, Form, Input, Radio, Select, Slider } from "antd";
+import { Button, Divider, Form, Radio, Select, Slider, TreeSelect } from "antd";
 import {
   authorOptions,
   categoryOptions,
@@ -8,13 +8,23 @@ import {
 } from "../common/constants";
 import styled from "styled-components";
 import { FieldName } from "../common/enums";
-
-const { Option } = Select;
+import { axiosInstance } from "../common/axiosInstance";
+import { handleGetLocationData } from "../common/helpers";
 
 const Home = () => {
-  const [form] = Form.useForm();
+  const [citiesData, setCitiesData] = useState<any[] | null>(null);
 
-  useEffect(() => {}, []);
+  const [form] = Form.useForm();
+  const { SHOW_PARENT } = TreeSelect;
+
+  const districts = useMemo(handleGetLocationData(citiesData), [citiesData]);
+
+  useEffect(() => {
+    axiosInstance
+      .get("regions")
+      .then((data) => setCitiesData(data.data))
+      .catch((error) => console.error(error));
+  }, []);
 
   return (
     <>
@@ -42,8 +52,8 @@ const Home = () => {
             <Slider
               range
               min={0}
-              max={999_999_999}
-              defaultValue={[0, 999_999_999]}
+              max={99_999_999}
+              defaultValue={[0, 99_999_999]}
             />
           </Form.Item>
           <Divider />
@@ -63,11 +73,26 @@ const Home = () => {
             </Radio.Group>
           </Form.Item>
           <Divider />
-          {/*______KM_METRO______*/}
-          <Form.Item label="Расстояние до метро, км" name={FieldName.KM_METRO}>
-            <Slider range min={0} max={5_000} defaultValue={[0, 5_000]} />
+          {/*______DISTRICT______*/}
+          <Form.Item label="Местоположение" name={FieldName.DISTRICTS}>
+            <TreeSelect
+              allowClear
+              showSearch
+              treeCheckable={true}
+              showCheckedStrategy={SHOW_PARENT}
+              style={{ width: "100%" }}
+              treeData={districts}
+              multiple
+              placeholder="Выбрать местоположение"
+            />
           </Form.Item>
           <Divider />
+          {/*______KM_METRO______*/}
+          <Form.Item label="Расстояние до метро, км" name={FieldName.KM_METRO}>
+            <Slider range min={0} max={50} defaultValue={[0, 50]} />
+          </Form.Item>
+          <Divider />
+          {/*______SUBMIT_BTN______*/}
           <Form.Item>
             <Button type="primary" htmlType="submit">
               Отправить
