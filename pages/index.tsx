@@ -1,120 +1,121 @@
-import { createRef, useEffect } from "react";
+import React, { useEffect } from "react";
+import Title from "antd/lib/typography/Title";
+import { Button, Divider, Form, Input, Radio, Select } from "antd";
 import {
-  Divider,
-  GeneralWrapper,
-  HeaderContainer,
-  SaveButton,
-} from "../components/UI";
-import { Cost, TagsSection } from "../components/home_page";
-import { Refs } from "../common/types";
-import { fetchCitiesData } from "../redux/slicers/formDataSlicer";
-import { useAppDispatch } from "../redux/hooks";
-import RadioButton from "../components/UI/RadioButton";
-import SimpleForm from "../components/home_page/SimpleForm";
+  authorOptions,
+  categoryOptions,
+  typeOptions,
+} from "../common/constants";
+import styled from "styled-components";
+
+const { Option } = Select;
 
 const Home = () => {
-  const dispatch = useAppDispatch();
+  const [form] = Form.useForm();
 
-  useEffect(() => {
-    dispatch(fetchCitiesData());
-  }, []);
-
-  const roomTagRef = createRef();
-  const flatTagRef = createRef();
-  const houseTagRef = createRef();
-
-  const propertyRefsArr: Refs = {
-    refs: [
-      {
-        value: 3,
-        ref: roomTagRef,
-        children: "Комната",
-      },
-      {
-        value: 2,
-        ref: flatTagRef,
-        children: "Квартира",
-      },
-      {
-        value: 4,
-        ref: houseTagRef,
-        children: "Дом",
-      },
-    ],
-    type: "category",
-  };
-
-  const rentTagRef = createRef();
-  const buyTagRef = createRef();
-
-  const servTypeArr: Refs = {
-    refs: [
-      {
-        value: 2,
-        ref: rentTagRef,
-        children: "Снять",
-      },
-      {
-        value: 1,
-        ref: buyTagRef,
-        children: "Купить",
-      },
-    ],
-    type: "type",
-  };
-
-  const agentRef = createRef();
-  const notAgentRef = createRef();
-
-  const agentArr: Refs = {
-    refs: [
-      {
-        value: 2,
-        ref: agentRef,
-        children: "Агент",
-      },
-      {
-        value: 3,
-        ref: notAgentRef,
-        children: "Собственник",
-      },
-    ],
-    type: "isAgent",
-  };
+  // useEffect(() => {
+  //   dispatch(fetchCitiesData());
+  // }, []);
 
   return (
     <>
-      <GeneralWrapper>
-        <HeaderContainer>Снять недвижимость</HeaderContainer>
+      <Wrapper>
+        <Title level={4}>Снять недвижимость</Title>
         <Divider />
-        <TagsSection refs={propertyRefsArr} header="Тип жилья" />
-        <Divider />
-        <TagsSection refs={servTypeArr} header="Тип услуги" />
-        <Divider />
-        <TagsSection refs={agentArr} header="Автор объявления" />
-        <Divider />
-        <SimpleForm
-          header="Стоимость ₽"
-          minType="minPrice"
-          maxType="maxPrice"
-        />
-        <Divider />
-        <RadioButton header="Без комиссии" label="Да" fieldType="fee" />
-        <Divider />
-        <RadioButton
-          header="Являетесь агентом?"
-          label="Да"
-          fieldType="isAgent"
-        />
-        <SimpleForm
-          header="Расстояние до метро, км."
-          minType="minKmMetro"
-          maxType="maxKmMetro"
-        />
-      </GeneralWrapper>
-      <SaveButton />
+        <Form form={form} layout="vertical" onFinish={(e) => console.log(e)}>
+          <Form.Item name="category" label="Тип жилья">
+            <Select options={categoryOptions} allowClear />
+          </Form.Item>
+          <Divider />
+          <Form.Item name="type" label="Тип услуги">
+            <Select options={typeOptions} allowClear />
+          </Form.Item>
+          <Divider />
+          <Form.Item name="author" label="Автор">
+            <Select options={authorOptions} allowClear />
+          </Form.Item>
+          <Divider />
+          <Form.Item label="Стоимость ₽">
+            <Input.Group compact>
+              <Input
+                style={{ width: 100, textAlign: "center" }}
+                placeholder="От"
+              />
+              <Input
+                style={{
+                  width: 30,
+                  borderLeft: 0,
+                  borderRight: 0,
+                  pointerEvents: "none",
+                }}
+                placeholder="~"
+                disabled
+              />
+              <Input
+                style={{
+                  width: 100,
+                  textAlign: "center",
+                }}
+                placeholder="До"
+              />
+            </Input.Group>
+          </Form.Item>
+          <Divider />
+          <Form.Item label="Без комиссии">
+            <Radio.Group buttonStyle="solid">
+              <Radio.Button value="true">Да</Radio.Button>
+              <Radio.Button value="false">Нет</Radio.Button>
+            </Radio.Group>
+          </Form.Item>
+          <Divider />
+          <Form.Item label="Являетесь агентом?">
+            <Radio.Group buttonStyle="solid">
+              <Radio.Button value="true">Да</Radio.Button>
+              <Radio.Button value="false">Нет</Radio.Button>
+            </Radio.Group>
+          </Form.Item>
+          <Divider />
+          <Form.Item label="Расстояние до метро, км">
+            <Input.Group compact>
+              <Input
+                style={{ width: 100, textAlign: "center" }}
+                placeholder="От"
+              />
+              <Input
+                style={{
+                  width: 30,
+                  borderLeft: 0,
+                  borderRight: 0,
+                  pointerEvents: "none",
+                }}
+                placeholder="~"
+                disabled
+              />
+              <Input
+                style={{
+                  width: 100,
+                  textAlign: "center",
+                }}
+                placeholder="До"
+              />
+            </Input.Group>
+          </Form.Item>
+          <Divider />
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Отправить
+            </Button>
+          </Form.Item>
+        </Form>
+      </Wrapper>
     </>
   );
 };
+
+const Wrapper = styled.div`
+  display: flex;
+  padding: 5px;
+  flex-direction: column;
+`;
 
 export default Home;
