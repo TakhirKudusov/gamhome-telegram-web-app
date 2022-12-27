@@ -29,6 +29,19 @@ import {
   geolocationHandler,
   mapboxHandler,
 } from "../common/geolocation.helper";
+import { createRef, useEffect } from "react";
+import {
+  Divider,
+  GeneralWrapper,
+  HeaderContainer,
+  SaveButton,
+} from "../components/UI";
+import { Cost, TagsSection } from "../components/home_page";
+import { Refs } from "../common/types";
+import { fetchCitiesData } from "../redux/slicers/formDataSlicer";
+import { useAppDispatch } from "../redux/hooks";
+import RadioButton from "../components/UI/RadioButton";
+import SimpleForm from "../components/home_page/SimpleForm";
 
 const Home = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -105,129 +118,100 @@ const Home = () => {
       });
   }, []);
 
+  const roomTagRef = createRef();
+  const flatTagRef = createRef();
+  const houseTagRef = createRef();
+
+  const propertyRefsArr: Refs = {
+    refs: [
+      {
+        value: 3,
+        ref: roomTagRef,
+        children: "Комната",
+      },
+      {
+        value: 2,
+        ref: flatTagRef,
+        children: "Квартира",
+      },
+      {
+        value: 4,
+        ref: houseTagRef,
+        children: "Дом",
+      },
+    ],
+    type: "category",
+  };
+
+  const rentTagRef = createRef();
+  const buyTagRef = createRef();
+
+  const servTypeArr: Refs = {
+    refs: [
+      {
+        value: 2,
+        ref: rentTagRef,
+        children: "Снять",
+      },
+      {
+        value: 1,
+        ref: buyTagRef,
+        children: "Купить",
+      },
+    ],
+    type: "type",
+  };
+
+  const agentRef = createRef();
+  const notAgentRef = createRef();
+
+  const agentArr: Refs = {
+    refs: [
+      {
+        value: 2,
+        ref: agentRef,
+        children: "Агент",
+      },
+      {
+        value: 3,
+        ref: notAgentRef,
+        children: "Собственник",
+      },
+    ],
+    type: "isAgent",
+  };
+
   return (
     <>
-      <Wrapper>
-        <Title level={4}>Снять недвижимость</Title>
+      <GeneralWrapper>
+        <HeaderContainer>Снять недвижимость</HeaderContainer>
         <Divider />
-        <Form
-          onValuesChange={handleFormChange}
-          form={form}
-          layout="vertical"
-          onFinish={handleFormSubmit}
-        >
-          {/*______CATEGORY______*/}
-          <Form.Item name={FieldName.CATEGORY} label="Тип жилья">
-            <Select options={categoryOptions} allowClear />
-          </Form.Item>
-          <Divider />
-          {/*______TYPE______*/}
-          <Form.Item name={FieldName.TYPE} label="Тип услуги">
-            <Select options={typeOptions} allowClear />
-          </Form.Item>
-          <Divider />
-          {/*______AUTHOR______*/}
-          <Form.Item name={FieldName.AUTHOR} label="Автор">
-            <Select options={authorOptions} allowClear />
-          </Form.Item>
-          <Divider />
-          {/*______MIN_PRICE______*/}
-          {mounted && (
-            <Form.Item
-              name={FieldName.MIN_PRICE}
-              label="Минимальная стоимость ₽"
-            >
-              <InputNumber min={1000} max={999_999_999} />
-            </Form.Item>
-          )}
-          <Divider />
-          {/*______MAX_PRICE______*/}
-          {mounted && (
-            <Form.Item
-              name={FieldName.MAX_PRICE}
-              label="Максимальная стоимость ₽"
-            >
-              <InputNumber min={1000} max={999_999_999} />
-            </Form.Item>
-          )}
-          <Divider />
-          {/*______FEE______*/}
-          <Form.Item label="Без комиссии" name={FieldName.FEE}>
-            <Radio.Group buttonStyle="solid">
-              <Radio.Button value="true">Да</Radio.Button>
-              <Radio.Button value="false">Нет</Radio.Button>
-            </Radio.Group>
-          </Form.Item>
-          <Divider />
-          {/*______IS_AGENT______*/}
-          <Form.Item label="Являетесь агентом?" name={FieldName.IS_AGENT}>
-            <Radio.Group buttonStyle="solid">
-              <Radio.Button value="true">Да</Radio.Button>
-              <Radio.Button value="false">Нет</Radio.Button>
-            </Radio.Group>
-          </Form.Item>
-          <Divider />
-          {/*______CITIES______*/}
-          <Form.Item label="Город" name={FieldName.CITY}>
-            <TreeSelect
-              allowClear
-              showSearch
-              style={{ width: "100%" }}
-              treeData={cities}
-              placeholder="Выбрать город"
-              treeDefaultExpandAll
-              onChange={handleChangeCity}
-              loading={loading}
-              status={status}
-              disabled={cityDisabled}
-            />
-          </Form.Item>
-          <Divider />
-          {/*______DISTRICTS______*/}
-          <Form.Item label="Районы" name={FieldName.DISTRICTS}>
-            <Select
-              allowClear
-              showSearch
-              style={{ width: "100%" }}
-              disabled={districtsDisabled}
-              options={districts}
-              mode="multiple"
-              placeholder="Выбрать район"
-            />
-          </Form.Item>
-          <Divider />
-          {/*______METROS______*/}
-          <Form.Item label="Метро" name={FieldName.METROS}>
-            <TreeSelect
-              allowClear
-              showSearch
-              style={{ width: "100%" }}
-              disabled={metrosDisabled}
-              placeholder="Выбрать метро"
-              treeDefaultExpandAll
-              treeData={metros}
-              treeCheckable
-            />
-          </Form.Item>
-          <Divider />
-          {/*______MAP______*/}
-          <Form.Item label="Местоположение на карте">
-            <MapContainer id="map" />
-          </Form.Item>
-          <Divider />
-          {/*______KM_METRO______*/}
-          <Form.Item label="Расстояние до метро, км" name={FieldName.KM_METRO}>
-            <Slider range min={0} max={20} />
-          </Form.Item>
-          <Divider />
-          {/*______SUBMIT_BTN______*/}
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Отправить
-            </Button>
-          </Form.Item>
-        </Form>
-      </Wrapper>
+        <TagsSection refs={propertyRefsArr} header="Тип жилья" />
+        <Divider />
+        <TagsSection refs={servTypeArr} header="Тип услуги" />
+        <Divider />
+        <TagsSection refs={agentArr} header="Автор объявления" />
+        <Divider />
+        <SimpleForm
+          header="Стоимость ₽"
+          minType="minPrice"
+          maxType="maxPrice"
+        />
+        <Divider />
+        <RadioButton header="Без комиссии" label="Да" fieldType="fee" />
+        <Divider />
+        <RadioButton
+          header="Являетесь агентом?"
+          label="Да"
+          fieldType="isAgent"
+        />
+        <SimpleForm
+          header="Расстояние до метро, км."
+          minType="minKmMetro"
+          maxType="maxKmMetro"
+        />
+      </GeneralWrapper>
+      <SaveButton />
     </>
   );
 };
