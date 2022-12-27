@@ -1,6 +1,15 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Title from "antd/lib/typography/Title";
-import { Button, Divider, Form, Radio, Select, Slider, TreeSelect } from "antd";
+import {
+  Button,
+  Divider,
+  Form,
+  InputNumber,
+  Radio,
+  Select,
+  Slider,
+  TreeSelect,
+} from "antd";
 import {
   authorOptions,
   categoryOptions,
@@ -9,21 +18,39 @@ import {
 import styled from "styled-components";
 import { FieldName } from "../common/enums";
 import { axiosInstance } from "../common/axiosInstance";
-import { handleGetLocationData } from "../common/helpers";
+import { handleFormSubmit, handleGetLocationData } from "../common/helpers";
+import mapboxgl from "mapbox-gl";
+import axios from "axios";
+import * as turf from "@turf/turf";
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
+import {
+  geolocationHandler,
+  mapboxHandler,
+} from "../common/geolocation.helper";
 
 const Home = () => {
+  const [polygon, setPolygon] = useState<[number, number][] | null>(null);
+  const [currCoords, setCurrCoords] = useState<[number, number]>([
+    37.61556, 55.75222,
+  ]);
   const [citiesData, setCitiesData] = useState<any[] | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   const [form] = Form.useForm();
-  const { SHOW_PARENT } = TreeSelect;
 
   const districts = useMemo(handleGetLocationData(citiesData), [citiesData]);
 
   useEffect(() => {
+    setMounted(true);
     axiosInstance
       .get("regions")
       .then((data) => setCitiesData(data.data))
       .catch((error) => console.error(error));
+  }, []);
+
+  useEffect(() => {
+    geolocationHandler(setCurrCoords);
+    mapboxHandler(currCoords, setPolygon);
   }, []);
 
   return (
@@ -31,7 +58,7 @@ const Home = () => {
       <Wrapper>
         <Title level={4}>Снять недвижимость</Title>
         <Divider />
-        <Form form={form} layout="vertical" onFinish={(e) => console.log(e)}>
+        <Form form={form} layout="vertical" onFinish={handleFormSubmit}>
           {/*______CATEGORY______*/}
           <Form.Item name={FieldName.CATEGORY} label="Тип жилья">
             <Select options={categoryOptions} allowClear />
@@ -47,15 +74,25 @@ const Home = () => {
             <Select options={authorOptions} allowClear />
           </Form.Item>
           <Divider />
-          {/*______CATEGORY______*/}
-          <Form.Item name={FieldName.PRICE} label="Стоимость ₽">
-            <Slider
-              range
-              min={0}
-              max={99_999_999}
-              defaultValue={[0, 99_999_999]}
-            />
-          </Form.Item>
+          {/*______MIN_PRICE______*/}
+          {mounted && (
+            <Form.Item
+              name={FieldName.MIN_PRICE}
+              label="Минимальная стоимость ₽"
+            >
+              <InputNumber min={1000} max={999_999_999} />
+            </Form.Item>
+          )}
+          <Divider />
+          {/*______MAX_PRICE______*/}
+          {mounted && (
+            <Form.Item
+              name={FieldName.MAX_PRICE}
+              label="Максимальная стоимость ₽"
+            >
+              <InputNumber min={1000} max={999_999_999} />
+            </Form.Item>
+          )}
           <Divider />
           {/*______FEE______*/}
           <Form.Item label="Без комиссии" name={FieldName.FEE}>
@@ -73,23 +110,27 @@ const Home = () => {
             </Radio.Group>
           </Form.Item>
           <Divider />
-          {/*______DISTRICT______*/}
-          <Form.Item label="Местоположение" name={FieldName.DISTRICTS}>
+          {/*______LOCATION______*/}
+          <Form.Item label="Местоположение" name={FieldName.LOCATION}>
             <TreeSelect
               allowClear
               showSearch
-              treeCheckable={true}
-              showCheckedStrategy={SHOW_PARENT}
+              // treeCheckable={true}
               style={{ width: "100%" }}
               treeData={districts}
-              multiple
+              // multiple
               placeholder="Выбрать местоположение"
             />
           </Form.Item>
           <Divider />
+          {/*______MAP______*/}
+          <Form.Item label="Расстояние до метро, км" name={FieldName.KM_METRO}>
+            <MapContainer id="map" />
+          </Form.Item>
+          <Divider />
           {/*______KM_METRO______*/}
           <Form.Item label="Расстояние до метро, км" name={FieldName.KM_METRO}>
-            <Slider range min={0} max={50} defaultValue={[0, 50]} />
+            <Slider range min={0} max={20} />
           </Form.Item>
           <Divider />
           {/*______SUBMIT_BTN______*/}
@@ -103,6 +144,11 @@ const Home = () => {
     </>
   );
 };
+
+const MapContainer = styled.div`
+  height: 300px;
+  max-width: 500px;
+`;
 
 const Wrapper = styled.div`
   display: flex;
