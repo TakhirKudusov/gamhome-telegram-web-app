@@ -7,7 +7,7 @@ import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 const geolocationHandler = (
   setCurrCoords: Dispatch<SetStateAction<[number, number]>>
 ) => {
-  if (navigator.geolocation) {
+  if (navigator?.geolocation) {
     navigator.geolocation.getCurrentPosition(
       ({ coords: { latitude, longitude } }) => {
         axios
@@ -63,14 +63,6 @@ const mapboxHandler = (
     "bottom-left"
   );
 
-  const geoCoder = new MapboxGeocoder({
-    accessToken: mapboxgl.accessToken,
-    language: "en",
-    mapboxgl: mapboxgl,
-  });
-
-  map.addControl(geoCoder, "top-right");
-
   map.addControl(
     new mapboxgl.NavigationControl({
       visualizePitch: true,
@@ -82,8 +74,6 @@ const mapboxHandler = (
   map.on("draw.create", updateArea);
   map.on("draw.delete", updateArea);
   map.on("draw.update", updateArea);
-
-  // geoCoder.on("result", (e) => console.log(e));
 
   function updateArea(e: any) {
     const data = draw.getAll();

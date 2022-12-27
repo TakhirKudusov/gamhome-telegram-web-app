@@ -5,6 +5,7 @@ export default function Document() {
     <Html>
       <Head>
         <title>Gamhome web form</title>
+        <script src="https://telegram.org/js/telegram-web-app.js"></script>
         <link
           rel="stylesheet"
           href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.2.2/mapbox-gl-draw.css"
