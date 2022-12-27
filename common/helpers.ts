@@ -1,47 +1,27 @@
 import { userData } from "./types";
+import { Dispatch, SetStateAction } from "react";
 
-const handleGetLocationData = (data: any[] | null) => () => {
-  if (data) {
-    return data.reduce((previousValue, currentValue, currentIndex) => {
-      previousValue.push({
-        title: currentValue.name,
-        value: `${currentValue.name}/${currentValue.id}/1`,
-        children: [],
-      });
-
-      for (let i = 0; i < currentValue.cities.length; i++) {
-        previousValue[previousValue.length - 1].children.push({
-          title: currentValue.cities[i].name,
-          value: `${currentValue.cities[i].name}/${currentValue.cities[i].id}/2`,
+const handleFormatData =
+  (data: any[] | null, key: "cities" | "metros") => () => {
+    if (data) {
+      return data.reduce((previousValue, currentValue) => {
+        previousValue.push({
+          title: currentValue.name,
+          value: `${currentValue.name}/${currentValue.id}`,
           children: [],
+          selectable: false,
         });
 
-        // for (let j = 0; j < currentValue.cities[i].metroLines.length; j++) {
-        //   previousValue[previousValue.length - 1].children[i].children.push({
-        //     title: currentValue.cities[i].metroLines[j].name,
-        //     value: `${currentValue.cities[i].metroLines[j].name}/${currentValue.cities[i].metroLines[j].id}/3`,
-        //     children: [],
-        //   });
-        //
-        //   for (
-        //     let q = 0;
-        //     q < currentValue.cities[i].metroLines[j].metros.length;
-        //     q++
-        //   ) {
-        //     previousValue[previousValue.length - 1].children[i].children[
-        //       j
-        //     ].children.push({
-        //       title: currentValue.cities[i].metroLines[j].metros[q].name,
-        //       value: `${currentValue.cities[i].metroLines[j].metros[q].name}/${currentValue.cities[i].metroLines[j].metros[q].id}/4`,
-        //     });
-        //   }
-        // }
-      }
-
-      return previousValue;
-    }, []);
-  }
-};
+        for (let i = 0; i < currentValue[key].length; i++) {
+          previousValue[previousValue.length - 1].children.push({
+            title: currentValue[key][i].name,
+            value: `${currentValue[key][i].name}/${currentValue[key][i].id}/1`,
+          });
+        }
+        return previousValue;
+      }, []);
+    }
+  };
 
 const handleFormSubmit = (form: userData) => {
   console.log(form);
@@ -55,4 +35,53 @@ const handleFormSubmit = (form: userData) => {
   // }
 };
 
-export { handleGetLocationData, handleFormSubmit };
+const handleFormatDistrictsData = (data: any[]) => {
+  return data.reduce((previousValue, currentValue) => {
+    previousValue.push({
+      title: currentValue.name,
+      value: currentValue.name,
+    });
+    return previousValue;
+  }, []);
+};
+
+const handleFormatMetrosData = (data: any[]) => {
+  return handleFormatData(data, "metros")();
+};
+
+const handleGetData =
+  (
+    citiesData: any[] | null,
+    currCity: string | null | undefined,
+    setDisabled: Dispatch<SetStateAction<boolean>>,
+    key: "districts" | "metroLines",
+    dataHandler: (data: any[]) => any[]
+  ) =>
+  () => {
+    if (citiesData) {
+      let city;
+      for (let i = 0; i < citiesData.length; i++) {
+        const tempCity = citiesData[i].cities.find(
+          (el: any) => el.name === currCity?.split("/")[0]
+        );
+        if (tempCity) {
+          city = tempCity;
+          break;
+        }
+      }
+      if (city?.[key] && city[key].length !== 0) {
+        setDisabled(false);
+        return dataHandler(city[key]);
+      }
+      setDisabled(true);
+    }
+    return [];
+  };
+
+export {
+  handleFormSubmit,
+  handleGetData,
+  handleFormatDistrictsData,
+  handleFormatMetrosData,
+  handleFormatData,
+};

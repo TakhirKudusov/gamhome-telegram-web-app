@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Title from "antd/lib/typography/Title";
 import {
   Button,
@@ -18,17 +18,22 @@ import {
 import styled from "styled-components";
 import { FieldName } from "../common/enums";
 import { axiosInstance } from "../common/axiosInstance";
-import { handleFormSubmit, handleGetLocationData } from "../common/helpers";
-import mapboxgl from "mapbox-gl";
-import axios from "axios";
-import * as turf from "@turf/turf";
-import MapboxDraw from "@mapbox/mapbox-gl-draw";
+import {
+  handleFormatData,
+  handleFormatDistrictsData,
+  handleFormatMetrosData,
+  handleFormSubmit,
+  handleGetData,
+} from "../common/helpers";
 import {
   geolocationHandler,
   mapboxHandler,
 } from "../common/geolocation.helper";
 
 const Home = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [status, setStatus] = useState<"error" | undefined>();
+
   const [polygon, setPolygon] = useState<[number, number][] | null>(null);
   const [currCoords, setCurrCoords] = useState<[number, number]>([
     37.61556, 55.75222,
@@ -36,21 +41,68 @@ const Home = () => {
   const [citiesData, setCitiesData] = useState<any[] | null>(null);
   const [mounted, setMounted] = useState(false);
 
+  const [currCity, setCurrCity] = useState<string | null | undefined>(null);
+
+  const [cityDisabled, setCityDisabled] = useState<boolean>(false);
+  const [districtsDisabled, setDistrictsDisabled] = useState<boolean>(true);
+  const [metrosDisabled, setMetrosDisabled] = useState<boolean>(true);
+
   const [form] = Form.useForm();
 
-  const districts = useMemo(handleGetLocationData(citiesData), [citiesData]);
+  const handleFormChange = (value: any) => {
+    if (value.city || !form.getFieldsValue().city) {
+      form.setFieldValue(FieldName.DISTRICTS, []);
+      form.setFieldValue(FieldName.METROS, []);
+    }
+  };
+
+  const handleChangeCity = (value: string) => {
+    setCurrCity(value);
+  };
+
+  const cities = useMemo(handleFormatData(citiesData, "cities"), [citiesData]);
+
+  const districts = useMemo(
+    handleGetData(
+      citiesData,
+      currCity,
+      setDistrictsDisabled,
+      "districts",
+      handleFormatDistrictsData
+    ),
+    [currCity]
+  );
+
+  const metros = useMemo(
+    handleGetData(
+      citiesData,
+      currCity,
+      setMetrosDisabled,
+      "metroLines",
+      handleFormatMetrosData
+    ),
+    [currCity]
+  );
 
   useEffect(() => {
+    setLoading(true);
+    setCityDisabled(true);
+    geolocationHandler(setCurrCoords);
+    mapboxHandler(currCoords, setPolygon);
     setMounted(true);
     axiosInstance
       .get("regions")
-      .then((data) => setCitiesData(data.data))
-      .catch((error) => console.error(error));
-  }, []);
-
-  useEffect(() => {
-    geolocationHandler(setCurrCoords);
-    mapboxHandler(currCoords, setPolygon);
+      .then((data) => {
+        setCitiesData(data.data);
+        setLoading(false);
+        setCityDisabled(false);
+      })
+      .catch((error) => {
+        setCityDisabled(false);
+        setLoading(false);
+        setStatus("error");
+        console.error(error);
+      });
   }, []);
 
   return (
@@ -58,7 +110,12 @@ const Home = () => {
       <Wrapper>
         <Title level={4}>Снять недвижимость</Title>
         <Divider />
-        <Form form={form} layout="vertical" onFinish={handleFormSubmit}>
+        <Form
+          onValuesChange={handleFormChange}
+          form={form}
+          layout="vertical"
+          onFinish={handleFormSubmit}
+        >
           {/*______CATEGORY______*/}
           <Form.Item name={FieldName.CATEGORY} label="Тип жилья">
             <Select options={categoryOptions} allowClear />
@@ -110,21 +167,51 @@ const Home = () => {
             </Radio.Group>
           </Form.Item>
           <Divider />
-          {/*______LOCATION______*/}
-          <Form.Item label="Местоположение" name={FieldName.LOCATION}>
+          {/*______CITIES______*/}
+          <Form.Item label="Город" name={FieldName.CITY}>
             <TreeSelect
               allowClear
               showSearch
-              // treeCheckable={true}
               style={{ width: "100%" }}
-              treeData={districts}
-              // multiple
-              placeholder="Выбрать местоположение"
+              treeData={cities}
+              placeholder="Выбрать город"
+              treeDefaultExpandAll
+              onChange={handleChangeCity}
+              loading={loading}
+              status={status}
+              disabled={cityDisabled}
+            />
+          </Form.Item>
+          <Divider />
+          {/*______DISTRICTS______*/}
+          <Form.Item label="Районы" name={FieldName.DISTRICTS}>
+            <Select
+              allowClear
+              showSearch
+              style={{ width: "100%" }}
+              disabled={districtsDisabled}
+              options={districts}
+              mode="multiple"
+              placeholder="Выбрать район"
+            />
+          </Form.Item>
+          <Divider />
+          {/*______METROS______*/}
+          <Form.Item label="Метро" name={FieldName.METROS}>
+            <TreeSelect
+              allowClear
+              showSearch
+              style={{ width: "100%" }}
+              disabled={metrosDisabled}
+              placeholder="Выбрать метро"
+              treeDefaultExpandAll
+              treeData={metros}
+              treeCheckable
             />
           </Form.Item>
           <Divider />
           {/*______MAP______*/}
-          <Form.Item label="Расстояние до метро, км" name={FieldName.KM_METRO}>
+          <Form.Item label="Местоположение на карте">
             <MapContainer id="map" />
           </Form.Item>
           <Divider />
