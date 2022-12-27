@@ -28,17 +28,8 @@ const StyledTag = styled.div`
   line-height: 18px;
   color: rgb(37, 37, 37);
   cursor: pointer;
-  transition: 0.1s linear;
-
-  &:hover {
-    background-color: rgba(104, 110, 253, 0.15);
-  }
-
-  &:active {
-    background-color: rgba(104, 110, 253, 0.25);
-  }
   &.active {
-    background-color: rgb(104, 110, 253);
+    background-color: #526eff;
     color: white;
   }
 `;

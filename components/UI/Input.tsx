@@ -23,7 +23,7 @@ const StyledInput = styled.input`
   cursor: pointer;
   border-radius: 100px;
   border: none;
-  max-width: 170px;
+  width: 100%;
   font-size: 15px;
   outline: none;
   &::placeholder {

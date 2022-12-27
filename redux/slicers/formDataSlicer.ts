@@ -17,10 +17,10 @@ export const fetchCitiesData = createAsyncThunk<{ data: City[] }>(
 const initialState: TFormData = {
   citiesData: null,
   data: {
-    minPrice: "",
-    maxPrice: "",
-    minKmMetro: "",
-    maxKmMetro: "",
+    minPrice: "10 000 000",
+    maxPrice: "15 000 000",
+    minKmMetro: "1",
+    maxKmMetro: "5",
   },
   isError: false,
   isLoading: false,
@@ -43,7 +43,7 @@ const formDataSlicer = createSlice({
         action.payload.name === "minKmMetro" ||
         action.payload.name === "maxKmMetro"
       ) {
-        handleNumFormat(state, action, 5_000, "5 000");
+        handleNumFormat(state, action, 50, "50");
         return;
       }
 

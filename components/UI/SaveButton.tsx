@@ -9,31 +9,37 @@ const SaveButton = () => {
     console.log(data);
   };
 
-  return <Container onClick={handlePushClick}>Отправить</Container>;
+  return (
+    <Container>
+      <Button onClick={handlePushClick}>Отправить</Button>
+    </Container>
+  );
 };
 
-const Container = styled.div`
+const Button = styled.div`
   display: flex;
   width: 100%;
   height: 60px;
-  position: fixed;
-  background-color: #676a71;
+  background-color: #252525;
   border-radius: 100px;
-  bottom: 0;
+  font-size: 17px;
   cursor: pointer;
   color: white;
   align-items: center;
   justify-content: center;
-  font-size: 17px;
-  transition: 0.1s linear;
-
-  &:hover {
-    background-color: rgba(103, 106, 113, 0.95);
-  }
 
   &:active {
     background-color: rgba(103, 106, 113, 0.9);
   }
+`;
+
+const Container = styled.div`
+  position: fixed;
+  bottom: 0;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 5px;
 `;
 
 export default SaveButton;

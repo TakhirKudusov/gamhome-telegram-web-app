@@ -1,20 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
-import Title from "antd/lib/typography/Title";
-import {
-  Button,
-  Divider,
-  Form,
-  InputNumber,
-  Radio,
-  Select,
-  Slider,
-  TreeSelect,
-} from "antd";
-import {
-  authorOptions,
-  categoryOptions,
-  typeOptions,
-} from "../common/constants";
+import React, { useEffect, useMemo, useState, createRef } from "react";
 import styled from "styled-components";
 import { FieldName } from "../common/enums";
 import { axiosInstance } from "../common/axiosInstance";
@@ -22,101 +6,43 @@ import {
   handleFormatData,
   handleFormatDistrictsData,
   handleFormatMetrosData,
-  handleFormSubmit,
   handleGetData,
 } from "../common/helpers";
 import {
   geolocationHandler,
   mapboxHandler,
 } from "../common/geolocation.helper";
-import { createRef, useEffect } from "react";
 import {
   Divider,
   GeneralWrapper,
   HeaderContainer,
   SaveButton,
+  SectionHeader,
 } from "../components/UI";
-import { Cost, TagsSection } from "../components/home_page";
+import { TagsSection } from "../components/home_page";
 import { Refs } from "../common/types";
-import { fetchCitiesData } from "../redux/slicers/formDataSlicer";
-import { useAppDispatch } from "../redux/hooks";
 import RadioButton from "../components/UI/RadioButton";
 import SimpleForm from "../components/home_page/SimpleForm";
+import Location from "../components/home_page/Location";
 
 const Home = () => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [status, setStatus] = useState<"error" | undefined>();
+  // const [loading, setLoading] = useState<boolean>(false);
+  // const [status, setStatus] = useState<"error" | undefined>();
+  //
 
-  const [polygon, setPolygon] = useState<[number, number][] | null>(null);
-  const [currCoords, setCurrCoords] = useState<[number, number]>([
-    37.61556, 55.75222,
-  ]);
-  const [citiesData, setCitiesData] = useState<any[] | null>(null);
-  const [mounted, setMounted] = useState(false);
+  // const [citiesData, setCitiesData] = useState<any[] | null>(null);
+  // const [mounted, setMounted] = useState(false);
+  //
+  // const [currCity, setCurrCity] = useState<string | null | undefined>(null);
+  //
+  // const [cityDisabled, setCityDisabled] = useState<boolean>(false);
+  // const [districtsDisabled, setDistrictsDisabled] = useState<boolean>(true);
+  // const [metrosDisabled, setMetrosDisabled] = useState<boolean>(true);
 
-  const [currCity, setCurrCity] = useState<string | null | undefined>(null);
-
-  const [cityDisabled, setCityDisabled] = useState<boolean>(false);
-  const [districtsDisabled, setDistrictsDisabled] = useState<boolean>(true);
-  const [metrosDisabled, setMetrosDisabled] = useState<boolean>(true);
-
-  const [form] = Form.useForm();
-
-  const handleFormChange = (value: any) => {
-    if (value.city || !form.getFieldsValue().city) {
-      form.setFieldValue(FieldName.DISTRICTS, []);
-      form.setFieldValue(FieldName.METROS, []);
-    }
-  };
-
-  const handleChangeCity = (value: string) => {
-    setCurrCity(value);
-  };
-
-  const cities = useMemo(handleFormatData(citiesData, "cities"), [citiesData]);
-
-  const districts = useMemo(
-    handleGetData(
-      citiesData,
-      currCity,
-      setDistrictsDisabled,
-      "districts",
-      handleFormatDistrictsData
-    ),
-    [currCity]
-  );
-
-  const metros = useMemo(
-    handleGetData(
-      citiesData,
-      currCity,
-      setMetrosDisabled,
-      "metroLines",
-      handleFormatMetrosData
-    ),
-    [currCity]
-  );
-
-  useEffect(() => {
-    setLoading(true);
-    setCityDisabled(true);
-    geolocationHandler(setCurrCoords);
-    mapboxHandler(currCoords, setPolygon);
-    setMounted(true);
-    axiosInstance
-      .get("regions")
-      .then((data) => {
-        setCitiesData(data.data);
-        setLoading(false);
-        setCityDisabled(false);
-      })
-      .catch((error) => {
-        setCityDisabled(false);
-        setLoading(false);
-        setStatus("error");
-        console.error(error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   // geolocationHandler(setCurrCoords);
+  //   mapboxHandler(currCoords, setPolygon);
+  // }, []);
 
   const roomTagRef = createRef();
   const flatTagRef = createRef();
@@ -181,10 +107,18 @@ const Home = () => {
     type: "isAgent",
   };
 
+  useEffect(() => {
+    if (flatTagRef?.current && rentTagRef?.current && notAgentRef?.current) {
+      (flatTagRef.current as HTMLDivElement).classList.add("active");
+      (rentTagRef.current as HTMLDivElement).classList.add("active");
+      (notAgentRef.current as HTMLDivElement).classList.add("active");
+    }
+  }, []);
+
   return (
     <>
       <GeneralWrapper>
-        <HeaderContainer>Снять недвижимость</HeaderContainer>
+        <HeaderContainer>Настроить параметры поиска</HeaderContainer>
         <Divider />
         <TagsSection refs={propertyRefsArr} header="Тип жилья" />
         <Divider />
@@ -205,11 +139,14 @@ const Home = () => {
           label="Да"
           fieldType="isAgent"
         />
+        <Divider />
         <SimpleForm
           header="Расстояние до метро, км."
           minType="minKmMetro"
           maxType="maxKmMetro"
         />
+        <Divider />
+        <Location />
       </GeneralWrapper>
       <SaveButton />
     </>

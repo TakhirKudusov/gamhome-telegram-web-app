@@ -12,7 +12,9 @@ type Props = {
 };
 
 const RadioButton: React.FC<Props> = ({ label, header, fieldType }) => {
-  const [activeCheckbox, setActiveCheckbox] = useState<boolean>(false);
+  const [activeCheckbox, setActiveCheckbox] = useState<boolean>(
+    fieldType === "fee"
+  );
 
   const dispatch = useAppDispatch();
 
@@ -51,7 +53,7 @@ const StyledRadioButton = styled.div<{ isActive: boolean }>`
   margin: 0;
   border-radius: 5px;
   border: ${({ isActive }) =>
-      isActive ? "5px rgb(104, 110, 253)" : "1px rgb(215, 219, 227)"}
+      isActive ? "5px #526eff" : "1px rgb(215, 219, 227)"}
     solid;
   cursor: pointer;
 `;
