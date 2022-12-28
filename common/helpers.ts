@@ -1,4 +1,4 @@
-import { userData } from "./types";
+import { Refs, userData } from "./types";
 import { Dispatch, SetStateAction } from "react";
 
 const handleFormatData =
@@ -78,10 +78,23 @@ const handleGetData =
     return [];
   };
 
+const setActiveParams = (
+  refs: Refs["refs"],
+  value: number | null | undefined
+) => {
+  for (let i = 0; i < refs.length; i++) {
+    (refs[i].ref.current as HTMLDivElement).classList.remove("active");
+    if (refs[i].ref?.current && refs[i].value === value) {
+      (refs[i].ref.current as HTMLDivElement).classList.add("active");
+    }
+  }
+};
+
 export {
   handleFormSubmit,
   handleGetData,
   handleFormatDistrictsData,
   handleFormatMetrosData,
   handleFormatData,
+  setActiveParams,
 };

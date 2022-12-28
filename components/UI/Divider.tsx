@@ -7,7 +7,7 @@ const Divider: React.FC = () => {
 
 const StyledDivider = styled.div`
   width: 100%;
-  height: 1px;
+  min-height: 1px;
   background-color: rgb(215, 219, 227);
 `;
 

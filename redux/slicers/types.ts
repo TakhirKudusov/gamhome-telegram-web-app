@@ -11,12 +11,13 @@ type FieldName =
   | "metros"
   | "districts"
   | "parameters"
-  | "fee";
+  | "fee"
+  | "polygon";
 
 type FieldAction = {
   payload: {
     name: FieldName;
-    value: string | number | boolean | undefined;
+    value: string | number | boolean | undefined | null | any[];
   };
   type: string;
 };
@@ -39,15 +40,16 @@ type City = Params & {
 };
 
 type Data = {
+  polygon?: any;
   isAgent?: boolean;
-  category?: 2 | 3 | 4;
-  type?: 1 | 2;
+  category?: 2 | 3 | 4 | null;
+  type?: 1 | 2 | null;
   minPrice?: string;
   maxPrice?: string;
   city?: number;
   metros?: number[];
   districts?: number[];
-  author?: 2 | 3;
+  author?: 2 | 3 | null;
   parameters?: number[];
   minKmMetro?: string;
   maxKmMetro?: string;

@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { FieldName } from "../../redux/slicers/types";
+import { FieldName, TFormData } from "../../redux/slicers/types";
 import { setPrimitiveField } from "../../redux/slicers/formDataSlicer";
-import { useAppDispatch } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { HeaderContainer, SectionHeader } from "./index";
 
 type Props = {
@@ -12,15 +12,18 @@ type Props = {
 };
 
 const RadioButton: React.FC<Props> = ({ label, header, fieldType }) => {
-  const [activeCheckbox, setActiveCheckbox] = useState<boolean>(
-    fieldType === "fee"
-  );
+  const [activeCheckbox, setActiveCheckbox] = useState<boolean>(false);
+
+  const { data } = useAppSelector<TFormData>((state) => state.formData);
 
   const dispatch = useAppDispatch();
 
+  useEffect(() => {
+    setActiveCheckbox(data[fieldType] as boolean);
+  }, [data]);
+
   const handleSetActiveClick = () => {
     dispatch(setPrimitiveField({ name: fieldType, value: !activeCheckbox }));
-    setActiveCheckbox((prev) => !prev);
   };
 
   return (

@@ -1,17 +1,5 @@
-import React, { useEffect, useMemo, useState, createRef } from "react";
+import React, { createRef, useEffect, useState } from "react";
 import styled from "styled-components";
-import { FieldName } from "../common/enums";
-import { axiosInstance } from "../common/axiosInstance";
-import {
-  handleFormatData,
-  handleFormatDistrictsData,
-  handleFormatMetrosData,
-  handleGetData,
-} from "../common/helpers";
-import {
-  geolocationHandler,
-  mapboxHandler,
-} from "../common/geolocation.helper";
 import {
   Divider,
   GeneralWrapper,
@@ -24,31 +12,20 @@ import { Refs } from "../common/types";
 import RadioButton from "../components/UI/RadioButton";
 import SimpleForm from "../components/home_page/SimpleForm";
 import Location from "../components/home_page/Location";
+import { useAppSelector } from "../redux/hooks";
+import { TFormData } from "../redux/slicers/types";
+import { setActiveParams } from "../common/helpers";
+import Parameters from "../components/home_page/Parameters";
+import Map from "../components/home_page/Map";
 
 const Home = () => {
-  // const [loading, setLoading] = useState<boolean>(false);
-  // const [status, setStatus] = useState<"error" | undefined>();
-  //
-
-  // const [citiesData, setCitiesData] = useState<any[] | null>(null);
-  // const [mounted, setMounted] = useState(false);
-  //
-  // const [currCity, setCurrCity] = useState<string | null | undefined>(null);
-  //
-  // const [cityDisabled, setCityDisabled] = useState<boolean>(false);
-  // const [districtsDisabled, setDistrictsDisabled] = useState<boolean>(true);
-  // const [metrosDisabled, setMetrosDisabled] = useState<boolean>(true);
-
-  // useEffect(() => {
-  //   // geolocationHandler(setCurrCoords);
-  //   mapboxHandler(currCoords, setPolygon);
-  // }, []);
+  const { data } = useAppSelector<TFormData>((state) => state.formData);
 
   const roomTagRef = createRef();
   const flatTagRef = createRef();
   const houseTagRef = createRef();
 
-  const propertyRefsArr: Refs = {
+  const categoryRefsArr: Refs = {
     refs: [
       {
         value: 3,
@@ -72,7 +49,7 @@ const Home = () => {
   const rentTagRef = createRef();
   const buyTagRef = createRef();
 
-  const servTypeArr: Refs = {
+  const typeArr: Refs = {
     refs: [
       {
         value: 2,
@@ -89,9 +66,9 @@ const Home = () => {
   };
 
   const agentRef = createRef();
-  const notAgentRef = createRef();
+  const ownerRef = createRef();
 
-  const agentArr: Refs = {
+  const authorArr: Refs = {
     refs: [
       {
         value: 2,
@@ -100,31 +77,29 @@ const Home = () => {
       },
       {
         value: 3,
-        ref: notAgentRef,
+        ref: ownerRef,
         children: "Собственник",
       },
     ],
-    type: "isAgent",
+    type: "author",
   };
 
   useEffect(() => {
-    if (flatTagRef?.current && rentTagRef?.current && notAgentRef?.current) {
-      (flatTagRef.current as HTMLDivElement).classList.add("active");
-      (rentTagRef.current as HTMLDivElement).classList.add("active");
-      (notAgentRef.current as HTMLDivElement).classList.add("active");
-    }
-  }, []);
+    setActiveParams(categoryRefsArr.refs, data.category);
+    setActiveParams(typeArr.refs, data.type);
+    setActiveParams(authorArr.refs, data.author);
+  }, [data]);
 
   return (
     <>
       <GeneralWrapper>
         <HeaderContainer>Настроить параметры поиска</HeaderContainer>
         <Divider />
-        <TagsSection refs={propertyRefsArr} header="Тип жилья" />
+        <TagsSection refs={categoryRefsArr} header="Тип жилья" />
         <Divider />
-        <TagsSection refs={servTypeArr} header="Тип услуги" />
+        <TagsSection refs={typeArr} header="Тип услуги" />
         <Divider />
-        <TagsSection refs={agentArr} header="Автор объявления" />
+        <TagsSection refs={authorArr} header="Автор объявления" />
         <Divider />
         <SimpleForm
           header="Стоимость ₽"
@@ -147,21 +122,15 @@ const Home = () => {
         />
         <Divider />
         <Location />
+        <Divider />
+        <SectionHeader>Дополнительные параметры</SectionHeader>
+        {data?.category && <Parameters />}
+        <Divider />
       </GeneralWrapper>
       <SaveButton />
+      <Map />
     </>
   );
 };
-
-const MapContainer = styled.div`
-  height: 300px;
-  max-width: 500px;
-`;
-
-const Wrapper = styled.div`
-  display: flex;
-  padding: 5px;
-  flex-direction: column;
-`;
 
 export default Home;

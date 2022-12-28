@@ -1,9 +1,13 @@
 import axios from "axios";
-import { Dispatch, SetStateAction } from "react";
 import mapboxgl from "mapbox-gl";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
+import { AppDispatch } from "../redux/types";
+import { setPrimitiveField } from "../redux/slicers/formDataSlicer";
 
-const mapboxHandler = (setPolygon: Dispatch<SetStateAction<any>>) => {
+const mapboxHandler = (
+  dispatch: AppDispatch,
+  polygon: any[] | null | undefined
+) => {
   if (navigator?.geolocation) {
     navigator.geolocation.getCurrentPosition(
       async ({ coords: { latitude, longitude } }) => {
@@ -59,13 +63,27 @@ const mapboxHandler = (setPolygon: Dispatch<SetStateAction<any>>) => {
           );
           map.addControl(draw, "top-right");
 
+          if (polygon) {
+            draw.add(polygon as unknown as any);
+          }
+
           const updateArea = (e: any) => {
             if (e.type === "draw.create" || e.type === "draw.update") {
               const data = draw.getAll();
-              setPolygon(data);
+              dispatch(
+                setPrimitiveField({
+                  name: "polygon",
+                  value: data as unknown as any[],
+                })
+              );
             }
             if (e.type === "draw.delete") {
-              setPolygon(null);
+              dispatch(
+                setPrimitiveField({
+                  name: "polygon",
+                  value: null,
+                })
+              );
             }
           };
 

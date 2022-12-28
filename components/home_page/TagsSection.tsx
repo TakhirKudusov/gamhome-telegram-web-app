@@ -1,8 +1,8 @@
 import React from "react";
 import { SectionHeader, Tag, TagsContainer } from "../UI";
-import FormHelper from "../../common/FormHelper";
 import { Refs } from "../../common/types";
 import { useAppDispatch } from "../../redux/hooks";
+import { setPrimitiveField } from "../../redux/slicers/formDataSlicer";
 
 type Props = {
   refs: Refs;
@@ -12,6 +12,10 @@ type Props = {
 const TagsSection: React.FC<Props> = ({ refs, header }) => {
   const dispatch = useAppDispatch();
 
+  const handleTagClick = (value: number | boolean) => () => {
+    dispatch(setPrimitiveField({ name: refs.type, value }));
+  };
+
   return (
     <>
       <SectionHeader>{header}</SectionHeader>
@@ -19,15 +23,11 @@ const TagsSection: React.FC<Props> = ({ refs, header }) => {
         {refs.refs.map((el, i) => {
           return (
             <Tag
-              onClickHandler={FormHelper.handleChangeActiveClick(
-                refs.refs[i],
-                refs,
-                dispatch
-              )}
-              ref={refs.refs[i].ref}
-              key={refs.refs[i].children}
+              onClickHandler={handleTagClick(el.value)}
+              ref={el.ref}
+              key={el.children}
             >
-              {refs.refs[i].children}
+              {el.children}
             </Tag>
           );
         })}

@@ -17,10 +17,16 @@ export const fetchCitiesData = createAsyncThunk<{ data: City[] }>(
 const initialState: TFormData = {
   citiesData: null,
   data: {
+    polygon: null,
+    isAgent: false,
+    category: 2,
+    type: 2,
     minPrice: "10 000 000",
     maxPrice: "15 000 000",
+    author: 3,
     minKmMetro: "1",
     maxKmMetro: "5",
+    fee: true,
   },
   isError: false,
   isLoading: false,
@@ -67,6 +73,20 @@ const formDataSlicer = createSlice({
         );
       }
     },
+    clearFormData(state) {
+      state.data = {
+        minPrice: "",
+        maxPrice: "",
+        minKmMetro: "",
+        maxKmMetro: "",
+        polygon: null,
+        isAgent: false,
+        category: null,
+        type: null,
+        author: null,
+        fee: false,
+      };
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -86,6 +106,7 @@ const formDataSlicer = createSlice({
   },
 });
 
-export const { setPrimitiveField, setComplexField } = formDataSlicer.actions;
+export const { setPrimitiveField, setComplexField, clearFormData } =
+  formDataSlicer.actions;
 
 export default formDataSlicer.reducer;
