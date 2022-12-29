@@ -3,24 +3,28 @@ import { SectionHeader, Tag, TagsContainer } from "../UI";
 import { Refs } from "../../common/types";
 import { useAppDispatch } from "../../redux/hooks";
 import { setPrimitiveField } from "../../redux/slicers/formDataSlicer";
+import styled from "styled-components";
 
 type Props = {
-  refs: Refs;
+  refs?: Refs;
   header: string;
+  className?: string;
 };
 
-const TagsSection: React.FC<Props> = ({ refs, header }) => {
+const TagsSection: React.FC<Props> = ({ refs, header, className }) => {
   const dispatch = useAppDispatch();
 
-  const handleTagClick = (value: number | boolean) => () => {
-    dispatch(setPrimitiveField({ name: refs.type, value }));
+  const handleTagClick = (value: number | boolean | string) => () => {
+    dispatch(
+      setPrimitiveField({ name: refs!.type, value, addType: refs?.paramType })
+    );
   };
 
   return (
-    <>
+    <Wrapper className={className}>
       <SectionHeader>{header}</SectionHeader>
       <TagsContainer>
-        {refs.refs.map((el, i) => {
+        {refs!.refs.map((el) => {
           return (
             <Tag
               onClickHandler={handleTagClick(el.value)}
@@ -32,8 +36,13 @@ const TagsSection: React.FC<Props> = ({ refs, header }) => {
           );
         })}
       </TagsContainer>
-    </>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
 export default TagsSection;

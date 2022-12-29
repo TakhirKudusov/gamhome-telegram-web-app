@@ -15,8 +15,8 @@ import Location from "../components/home_page/Location";
 import { useAppSelector } from "../redux/hooks";
 import { TFormData } from "../redux/slicers/types";
 import { setActiveParams } from "../common/helpers";
-import Parameters from "../components/home_page/Parameters";
 import Map from "../components/home_page/Map";
+import Parameters from "../components/home_page/Parameters";
 
 const Home = () => {
   const { data } = useAppSelector<TFormData>((state) => state.formData);
@@ -123,9 +123,7 @@ const Home = () => {
         <Divider />
         <Location />
         <Divider />
-        <SectionHeader>Дополнительные параметры</SectionHeader>
         {data?.category && <Parameters />}
-        <Divider />
       </GeneralWrapper>
       <SaveButton />
       <Map />

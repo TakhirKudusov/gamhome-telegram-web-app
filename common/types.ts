@@ -3,10 +3,48 @@ import { FieldName } from "../redux/slicers/types";
 import { AppDispatch } from "../redux/types";
 
 type Ref = {
-  value: number | boolean;
+  value: number | boolean | string;
   ref: RefObject<any>;
   children: string;
 };
+
+type FlatParamName =
+  | "repair"
+  | "minFloorsInHouse"
+  | "maxFloorsInHouse"
+  | "minKitchenSquare"
+  | "maxKitchenSquare"
+  | "minSquare"
+  | "maxSquare"
+  | "minRoomsQuantity"
+  | "maxRoomsQuantity"
+  | "minFloor"
+  | "maxFloor"
+  | "minLivingSquare"
+  | "maxLivingSquare"
+  | "houseType";
+
+type RoomParamName =
+  | "minFloor"
+  | "maxFloor"
+  | "minFloorsInHouse"
+  | "maxFloorsInHouse"
+  | "minRoomSquare"
+  | "maxRoomSquare"
+  | "minRoomsInFlatQuantity"
+  | "maxRoomsInFlatQuantity"
+  | "houseType";
+
+type HouseParamName =
+  | "minHouseSquare"
+  | "maxHouseSquare"
+  | "minFloorsInHouse"
+  | "maxFloorsInHouse"
+  | "minLandSquare"
+  | "maxLandSquare"
+  | "wallMaterial";
+
+type AddParameters = FlatParamName | RoomParamName | HouseParamName;
 
 type Params = {
   id: number;
@@ -34,6 +72,7 @@ type userData = {
 type Refs = {
   refs: Ref[];
   type: FieldName;
+  paramType?: AddParameters;
 };
 
 type HandleChangeActiveClick = (
@@ -42,4 +81,10 @@ type HandleChangeActiveClick = (
   dispatch: AppDispatch
 ) => () => void;
 
-export type { ChildrenProp, HandleChangeActiveClick, Refs, userData };
+export type {
+  ChildrenProp,
+  HandleChangeActiveClick,
+  Refs,
+  userData,
+  AddParameters,
+};

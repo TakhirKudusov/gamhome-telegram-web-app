@@ -1,3 +1,5 @@
+import { AddParameters } from "../../common/types";
+
 type FieldName =
   | "isAgent"
   | "category"
@@ -10,7 +12,7 @@ type FieldName =
   | "maxKmMetro"
   | "metros"
   | "districts"
-  | "parameters"
+  | "params"
   | "fee"
   | "polygon";
 
@@ -18,6 +20,7 @@ type FieldAction = {
   payload: {
     name: FieldName;
     value: string | number | boolean | undefined | null | any[];
+    addType?: AddParameters;
   };
   type: string;
 };
@@ -39,6 +42,8 @@ type City = Params & {
   })[];
 };
 
+type ParametersObj = Partial<Record<AddParameters, string | null>>;
+
 type Data = {
   polygon?: any;
   isAgent?: boolean;
@@ -50,7 +55,7 @@ type Data = {
   metros?: number[];
   districts?: number[];
   author?: 2 | 3 | null;
-  parameters?: number[];
+  params?: ParametersObj;
   minKmMetro?: string;
   maxKmMetro?: string;
   fee?: boolean;

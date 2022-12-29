@@ -27,6 +27,11 @@ const initialState: TFormData = {
     minKmMetro: "1",
     maxKmMetro: "5",
     fee: true,
+    params: {
+      repair: null,
+      wallMaterial: null,
+      houseType: null,
+    },
   },
   isError: false,
   isLoading: false,
@@ -37,6 +42,14 @@ const formDataSlicer = createSlice({
   initialState,
   reducers: {
     setPrimitiveField(state, action: FieldAction) {
+      if (action.payload.name === "category") {
+        state.data.params = {
+          repair: null,
+          wallMaterial: null,
+          houseType: null,
+        };
+      }
+
       if (
         action.payload.name === "minPrice" ||
         action.payload.name === "maxPrice"
@@ -50,6 +63,12 @@ const formDataSlicer = createSlice({
         action.payload.name === "maxKmMetro"
       ) {
         handleNumFormat(state, action, 50, "50");
+        return;
+      }
+
+      if (action.payload.name === "params" && action.payload.addType) {
+        (state.data[action.payload.name]![action.payload.addType] as any) =
+          action.payload.value;
         return;
       }
 
@@ -85,6 +104,11 @@ const formDataSlicer = createSlice({
         type: null,
         author: null,
         fee: false,
+        params: {
+          repair: null,
+          wallMaterial: null,
+          houseType: null,
+        },
       };
     },
   },
