@@ -1,15 +1,20 @@
 import React, { SyntheticEvent } from "react";
 import { CostContainer, Input, SectionHeader } from "../UI";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { setPrimitiveField } from "../../redux/slicers/formDataSlicer";
+import {
+  setParamInput,
+  setPrimitiveField,
+} from "../../redux/slicers/formDataSlicer";
 import { FieldName, TFormData } from "../../redux/slicers/types";
 import styled from "styled-components";
+import { AddParameters } from "../../common/types";
 
 type Props = {
   header: string;
-  minType: FieldName;
-  maxType: FieldName;
+  minType: FieldName | string;
+  maxType: FieldName | string;
   className?: string;
+  isParam?: boolean;
 };
 
 const SimpleForm: React.FC<Props> = ({
@@ -17,17 +22,44 @@ const SimpleForm: React.FC<Props> = ({
   minType,
   maxType,
   className,
+  isParam,
 }) => {
   const { data } = useAppSelector<TFormData>((state) => state.formData);
 
   const dispatch = useAppDispatch();
 
-  const handleMinChange = (e: any) => {
-    dispatch(setPrimitiveField({ name: minType, value: e.target.value }));
+  const handleChangeValue = (type: "min" | "max") => (e: any) => {
+    if (type === "min") {
+      if (isParam) {
+        dispatch(
+          setParamInput({ name: minType as FieldName, value: e.target.value })
+        );
+        return;
+      }
+      dispatch(
+        setPrimitiveField({ name: minType as FieldName, value: e.target.value })
+      );
+    } else {
+      if (isParam) {
+        dispatch(
+          setParamInput({ name: maxType as FieldName, value: e.target.value })
+        );
+        return;
+      }
+      dispatch(
+        setPrimitiveField({ name: maxType as FieldName, value: e.target.value })
+      );
+    }
   };
 
-  const handleMaxChange = (e: any) => {
-    dispatch(setPrimitiveField({ name: maxType, value: e.target.value }));
+  const getInputValue = (type: "min" | "max") => {
+    if (type === "min") {
+      if (isParam) return data.params[minType as AddParameters];
+      return data[minType as FieldName];
+    } else {
+      if (isParam) return data.params[maxType as AddParameters];
+      return data[maxType as FieldName];
+    }
   };
 
   return (
@@ -35,14 +67,14 @@ const SimpleForm: React.FC<Props> = ({
       <SectionHeader>{header}</SectionHeader>
       <CostContainer>
         <Input
-          value={data[minType] as any}
-          onChangeHandler={handleMinChange}
+          value={getInputValue("min")}
+          onChangeHandler={handleChangeValue("min")}
           placeholder="от"
         />
         —
         <Input
-          value={data[maxType] as any}
-          onChangeHandler={handleMaxChange}
+          value={getInputValue("max")}
+          onChangeHandler={handleChangeValue("max")}
           placeholder="до"
         />
       </CostContainer>

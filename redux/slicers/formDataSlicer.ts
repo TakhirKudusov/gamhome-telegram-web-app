@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { City, FieldAction, TFormData } from "./types";
+import { City, FieldAction, FieldName, TFormData } from "./types";
 import { axiosInstance } from "../../common/axiosInstance";
 import { handleNumFormat } from "./helpers";
 
@@ -17,6 +17,9 @@ export const fetchCitiesData = createAsyncThunk<{ data: City[] }>(
 const initialState: TFormData = {
   citiesData: null,
   data: {
+    city: null,
+    metros: null,
+    districts: null,
     polygon: null,
     isAgent: false,
     category: 2,
@@ -31,6 +34,28 @@ const initialState: TFormData = {
       repair: null,
       wallMaterial: null,
       houseType: null,
+      minFloorsInHouse: "",
+      maxFloorsInHouse: "",
+      minKitchenSquare: "",
+      maxKitchenSquare: "",
+      minSquare: "",
+      maxSquare: "",
+      minRoomsQuantity: "",
+      maxRoomsQuantity: "",
+      minFloor: "",
+      maxFloor: "",
+      minLivingSquare: "",
+      maxLivingSquare: "",
+      minDeliveryTime: "",
+      maxDeliveryTime: "",
+      minHouseSquare: "",
+      maxHouseSquare: "",
+      minLandSquare: "",
+      maxLandSquare: "",
+      minRoomsInFlatQuantity: "",
+      maxRoomsInFlatQuantity: "",
+      minRoomSquare: "",
+      maxRoomSquare: "",
     },
   },
   isError: false,
@@ -47,6 +72,28 @@ const formDataSlicer = createSlice({
           repair: null,
           wallMaterial: null,
           houseType: null,
+          minFloorsInHouse: "",
+          maxFloorsInHouse: "",
+          minKitchenSquare: "",
+          maxKitchenSquare: "",
+          minSquare: "",
+          maxSquare: "",
+          minRoomsQuantity: "",
+          maxRoomsQuantity: "",
+          minFloor: "",
+          maxFloor: "",
+          minLivingSquare: "",
+          maxLivingSquare: "",
+          minDeliveryTime: "",
+          maxDeliveryTime: "",
+          minHouseSquare: "",
+          maxHouseSquare: "",
+          minLandSquare: "",
+          maxLandSquare: "",
+          minRoomsInFlatQuantity: "",
+          maxRoomsInFlatQuantity: "",
+          minRoomSquare: "",
+          maxRoomSquare: "",
         };
       }
 
@@ -92,8 +139,30 @@ const formDataSlicer = createSlice({
         );
       }
     },
+    setParamInput(state, action: FieldAction) {
+      if (action.payload.name.toLowerCase().includes("floor")) {
+        handleNumFormat(state, action, 50, "50", true);
+        return;
+      }
+      if (action.payload.name.toLowerCase().includes("square")) {
+        handleNumFormat(state, action, 9_999, "9 999", true);
+        return;
+      }
+      if (action.payload.name.toLowerCase().includes("quantity")) {
+        handleNumFormat(state, action, 15, "15", true);
+        return;
+      }
+      if (action.payload.name.toLowerCase().includes("delivery")) {
+        handleNumFormat(state, action, 2023, "2023", true, true);
+        return;
+      }
+      (state.data.params as any)[action.payload.name] = action.payload.value;
+    },
     clearFormData(state) {
       state.data = {
+        city: null,
+        metros: null,
+        districts: null,
         minPrice: "",
         maxPrice: "",
         minKmMetro: "",
@@ -108,6 +177,28 @@ const formDataSlicer = createSlice({
           repair: null,
           wallMaterial: null,
           houseType: null,
+          minFloorsInHouse: "",
+          maxFloorsInHouse: "",
+          minKitchenSquare: "",
+          maxKitchenSquare: "",
+          minSquare: "",
+          maxSquare: "",
+          minRoomsQuantity: "",
+          maxRoomsQuantity: "",
+          minFloor: "",
+          maxFloor: "",
+          minLivingSquare: "",
+          maxLivingSquare: "",
+          minDeliveryTime: "",
+          maxDeliveryTime: "",
+          minHouseSquare: "",
+          maxHouseSquare: "",
+          minLandSquare: "",
+          maxLandSquare: "",
+          minRoomsInFlatQuantity: "",
+          maxRoomsInFlatQuantity: "",
+          minRoomSquare: "",
+          maxRoomSquare: "",
         },
       };
     },
@@ -130,7 +221,11 @@ const formDataSlicer = createSlice({
   },
 });
 
-export const { setPrimitiveField, setComplexField, clearFormData } =
-  formDataSlicer.actions;
+export const {
+  setPrimitiveField,
+  setComplexField,
+  clearFormData,
+  setParamInput,
+} = formDataSlicer.actions;
 
 export default formDataSlicer.reducer;

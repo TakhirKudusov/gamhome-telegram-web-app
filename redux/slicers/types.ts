@@ -45,20 +45,20 @@ type City = Params & {
 type ParametersObj = Partial<Record<AddParameters, string | null>>;
 
 type Data = {
-  polygon?: any;
-  isAgent?: boolean;
-  category?: 2 | 3 | 4 | null;
-  type?: 1 | 2 | null;
-  minPrice?: string;
-  maxPrice?: string;
-  city?: number;
-  metros?: number[];
-  districts?: number[];
-  author?: 2 | 3 | null;
-  params?: ParametersObj;
-  minKmMetro?: string;
-  maxKmMetro?: string;
-  fee?: boolean;
+  polygon: any;
+  isAgent: boolean;
+  category: 2 | 3 | 4 | null;
+  type: 1 | 2 | null;
+  minPrice: string;
+  maxPrice: string;
+  city: number | null;
+  metros: number[] | null;
+  districts: number[] | null;
+  author: 2 | 3 | null;
+  params: ParametersObj;
+  minKmMetro: string;
+  maxKmMetro: string;
+  fee: boolean;
 };
 
 type TFormData = {

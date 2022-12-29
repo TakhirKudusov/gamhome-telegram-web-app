@@ -185,8 +185,9 @@ const Parameters = () => {
             {el.type === "input" ? (
               <StyledForm
                 header={el.name}
-                minType="minKmMetro"
-                maxType="maxKmMetro"
+                minType={("min" + el.paramType) as string}
+                maxType={("max" + el.paramType) as string}
+                isParam={true}
               />
             ) : (
               <StyledTags

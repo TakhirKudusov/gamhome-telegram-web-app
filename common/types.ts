@@ -22,7 +22,9 @@ type FlatParamName =
   | "maxFloor"
   | "minLivingSquare"
   | "maxLivingSquare"
-  | "houseType";
+  | "houseType"
+  | "minDeliveryTime"
+  | "maxDeliveryTime";
 
 type RoomParamName =
   | "minFloor"
