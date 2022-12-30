@@ -42,6 +42,7 @@ type MetroLines = Params & {
 
 type Cities = Params & {
   metroLines: MetroLines[];
+  districts: Params[];
 };
 
 type City = Params & {
@@ -57,9 +58,9 @@ type Data = {
   type: 1 | 2 | null;
   minPrice: string;
   maxPrice: string;
-  city: Params | null;
-  metros: Params[] | null;
-  districts: Params[] | null;
+  city: Params;
+  metros: Params[];
+  districts: Params[];
   author: 2 | 3 | null;
   params: ParametersObj;
   minKmMetro: string;
@@ -74,6 +75,14 @@ type TFormData = {
   isError: boolean;
 };
 
+type Select =
+  | "isMapDisabled"
+  | "isCitiesDisabled"
+  | "isDistrictsDisabled"
+  | "isMetrosDisabled";
+
+type TDisableSelect = Record<Select, boolean>;
+
 export type {
   TFormData,
   FieldAction,
@@ -82,4 +91,6 @@ export type {
   Cities,
   MetroLines,
   Metros,
+  TDisableSelect,
+  Select,
 };

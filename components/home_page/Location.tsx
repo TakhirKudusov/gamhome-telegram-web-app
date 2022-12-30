@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useContext } from "react";
 import styled from "styled-components";
 import { ChevronRight } from "@styled-icons/bootstrap";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { TFormData } from "../../redux/slicers/types";
+import { TDisableSelect, TFormData } from "../../redux/slicers/types";
 import { AppContext } from "../../common/AppContext";
 import SectionHeader from "../UI/SectionHeader";
 import Badge from "../UI/Badge";
@@ -12,14 +12,25 @@ import BadgesGroup from "../UI/BadgesGroup";
 const Location = () => {
   const { data } = useAppSelector<TFormData>((state) => state.formData);
 
+  const {
+    isMapDisabled,
+    isCitiesDisabled,
+    isDistrictsDisabled,
+    isMetrosDisabled,
+  } = useAppSelector<TDisableSelect>((state) => state.disableSelects);
+
   const dispatch = useAppDispatch();
 
   const { setIsMapOpen, setIsCityOpen, setIsDistrictOpen, setIsMetroOpen } =
     useContext(AppContext);
 
   const handleMapOpen =
-    (setStateAction: Dispatch<SetStateAction<boolean>> | undefined) => () => {
-      if (setStateAction) {
+    (
+      setStateAction: Dispatch<SetStateAction<boolean>> | undefined,
+      isDisabled: boolean
+    ) =>
+    () => {
+      if (setStateAction && !isDisabled) {
         setStateAction(true);
       }
     };
@@ -34,11 +45,18 @@ const Location = () => {
     );
   };
 
+  const handleClearDistricts = () => {
+    dispatch(setPrimitiveField({ name: "districts", value: [] }));
+  };
+
   return (
     <>
       <SectionHeader>Расположение</SectionHeader>
       <ButtonsContainer>
-        <ChoseBtn onClick={handleMapOpen(setIsMapOpen)}>
+        <ChoseBtn
+          disabled={isMapDisabled}
+          onClick={handleMapOpen(setIsMapOpen, isMapDisabled)}
+        >
           <Text>Нарисовать на карте</Text>
           <ChevronIcon />
         </ChoseBtn>
@@ -48,7 +66,10 @@ const Location = () => {
             onClickHandler={handleClearPolygon}
           />
         )}
-        <ChoseBtn onClick={handleMapOpen(setIsCityOpen)}>
+        <ChoseBtn
+          disabled={isCitiesDisabled}
+          onClick={handleMapOpen(setIsCityOpen, isCitiesDisabled)}
+        >
           <Text>Выбрать город</Text>
           <ChevronIcon />
         </ChoseBtn>
@@ -58,11 +79,24 @@ const Location = () => {
             onClickHandler={handleClearCity}
           />
         )}
-        <ChoseBtn onClick={handleMapOpen(setIsDistrictOpen)}>
+        <ChoseBtn
+          disabled={!data?.city?.id || isDistrictsDisabled}
+          onClick={handleMapOpen(setIsDistrictOpen, isDistrictsDisabled)}
+        >
           <Text>Выбрать район</Text>
           <ChevronIcon />
         </ChoseBtn>
-        <ChoseBtn onClick={handleMapOpen(setIsMetroOpen)}>
+        {data?.districts.length !== 0 && (
+          <BadgesGroup
+            text={data?.districts[0]?.name}
+            quantity={data?.districts.length}
+            onClickHandler={handleClearDistricts}
+          />
+        )}
+        <ChoseBtn
+          disabled={!data?.city?.id || isMetrosDisabled}
+          onClick={handleMapOpen(setIsMetroOpen, isMetrosDisabled)}
+        >
           <Text>Выбрать метро</Text>
           <ChevronIcon />
         </ChoseBtn>{" "}
@@ -81,16 +115,21 @@ const ChevronIcon = styled(ChevronRight)`
   color: #676a71;
 `;
 
-const ChoseBtn = styled.div`
+const ChoseBtn = styled.div<{ disabled?: boolean }>`
   display: flex;
   width: 100%;
-  background-color: #f1f2f4;
+  background-color: ${({ disabled }) =>
+    disabled ? "rgba(0,0,0,0.02)" : "#f1f2f4"};
   height: 44px;
   border-radius: 100px;
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
   justify-content: space-between;
   align-items: center;
   padding: 0 20px 0 25px;
+
+  & * {
+    color: ${({ disabled }) => disabled && "rgba(103,106,113,0.25)"};
+  }
 `;
 
 const ButtonsContainer = styled.div`

@@ -5,12 +5,14 @@ import styled from "styled-components";
 type Props = {
   text: string;
   onClickHandler: () => void;
+  quantity?: number;
 };
 
-const BadgesGroup: FC<Props> = ({ text, onClickHandler }) => {
+const BadgesGroup: FC<Props> = ({ text, onClickHandler, quantity = 1 }) => {
   return (
     <BadgeContainer>
       <Badge text={text} />
+      {quantity > 1 && <Badge text={`+ ${quantity - 1} ...`} />}
       <ClearBadge onClickHandler={onClickHandler} text="Стереть" />
     </BadgeContainer>
   );

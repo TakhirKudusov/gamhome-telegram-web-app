@@ -3,11 +3,13 @@ import { createWrapper, HYDRATE } from "next-redux-wrapper";
 import { configureStore } from "@reduxjs/toolkit";
 import { CurriedGetDefaultMiddleware } from "@reduxjs/toolkit/dist/getDefaultMiddleware";
 import formDataReducer from "./slicers/formDataSlicer";
+import disableSelectsReducer from "./slicers/disableSelectsSlicer";
 import { parametersApi } from "./APIs/parametersApi";
 
 const combinedReducer = combineReducers({
   [parametersApi.reducerPath]: parametersApi.reducer,
   formData: formDataReducer,
+  disableSelects: disableSelectsReducer,
 });
 
 const reducer = (

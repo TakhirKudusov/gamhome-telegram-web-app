@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { City, FieldAction, TFormData } from "./types";
 import { axiosInstance } from "../../common/axiosInstance";
 import { handleNumFormat } from "./helpers";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 
 export const fetchCitiesData = createAsyncThunk<{ data: City[] }>(
   "formData/fetchCitiesData",
@@ -21,8 +22,8 @@ const initialState: TFormData = {
       name: "",
       id: null,
     },
-    metros: null,
-    districts: null,
+    metros: [],
+    districts: [],
     polygon: null,
     isAgent: false,
     category: 2,
@@ -125,17 +126,26 @@ const formDataSlicer = createSlice({
       state.data[action.payload.name] = action.payload.value as any;
     },
     setComplexField(state, action: FieldAction) {
-      if (typeof state.data[action.payload.name] !== "object") {
-        state.data.metros = [];
-      }
-      if (
-        (state.data[action.payload.name] as Array<any>).includes(
-          action.payload.value
-        )
+      let isExist = false;
+
+      for (
+        let i = 0;
+        i < (state.data[action.payload.name] as Array<any>).length;
+        i++
       ) {
+        if (
+          (action.payload?.value as Params)?.id ===
+          state.data[action.payload.name][i].id
+        ) {
+          isExist = true;
+          break;
+        }
+      }
+
+      if (isExist) {
         (state.data[action.payload.name] as Array<any>) = (
           state.data[action.payload.name] as Array<any>
-        ).filter((el) => el !== action.payload);
+        ).filter((el) => el.id !== (action.payload?.value as Params)?.id);
       } else {
         (state.data[action.payload.name] as Array<any>).push(
           action.payload.value
@@ -167,8 +177,8 @@ const formDataSlicer = createSlice({
           name: "",
           id: null,
         },
-        metros: null,
-        districts: null,
+        metros: [],
+        districts: [],
         minPrice: "",
         maxPrice: "",
         minKmMetro: "",
@@ -217,12 +227,7 @@ const formDataSlicer = createSlice({
       })
       .addCase(fetchCitiesData.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.citiesData = action.payload.data
-          ?.map((el) => {
-            el.cities = el.cities.sort((a, b) => a.name.localeCompare(b.name));
-            return el;
-          })
-          ?.sort((a, b) => a.name.localeCompare(b.name));
+        state.citiesData = action.payload.data;
       })
       .addCase(fetchCitiesData.rejected, (state, action) => {
         state.isError = true;

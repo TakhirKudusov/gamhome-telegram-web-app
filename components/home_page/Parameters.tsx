@@ -7,7 +7,6 @@ import styled from "styled-components";
 import { Refs } from "../../common/types";
 import { setActiveParams } from "../../common/helpers";
 import TagsSection from "./TagsSection";
-import Spinner from "../UI/Spinner";
 
 const Parameters = () => {
   const {

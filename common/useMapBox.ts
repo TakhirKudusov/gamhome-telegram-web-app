@@ -4,6 +4,7 @@ import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { AppDispatch } from "../redux/types";
 import { setPrimitiveField } from "../redux/slicers/formDataSlicer";
 import { useEffect, useState } from "react";
+import { setEnabled } from "../redux/slicers/disableSelectsSlicer";
 
 const useMapBox = (dispatch: AppDispatch): any => {
   const [draw, setDraw] = useState<any | null>(null);
@@ -91,6 +92,8 @@ const useMapBox = (dispatch: AppDispatch): any => {
             map.on("draw.create", updateArea);
             map.on("draw.delete", updateArea);
             map.on("draw.update", updateArea);
+
+            dispatch(setEnabled("isMapDisabled"));
           }
         );
       }
