@@ -21,7 +21,7 @@ const AreaRow: React.FC<Props & ChildrenProp> = ({
 
 const StyledAreaRow = styled.div`
   display: flex;
-  height: 24px;
+  height: 28px;
   background-color: rgb(243, 244, 246);
   cursor: pointer;
   align-items: center;

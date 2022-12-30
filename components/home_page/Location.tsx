@@ -7,6 +7,7 @@ import { AppContext } from "../../common/AppContext";
 import SectionHeader from "../UI/SectionHeader";
 import Badge from "../UI/Badge";
 import { setPrimitiveField } from "../../redux/slicers/formDataSlicer";
+import BadgesGroup from "../UI/BadgesGroup";
 
 const Location = () => {
   const { data } = useAppSelector<TFormData>((state) => state.formData);
@@ -42,22 +43,20 @@ const Location = () => {
           <ChevronIcon />
         </ChoseBtn>
         {data.polygon && (
-          <BadgeContainer>
-            <Badge
-              text={`Количество выделенных областей: ${data.polygon?.features.length}`}
-            />
-            <ClearBadge onClickHandler={handleClearPolygon} text="Стереть" />
-          </BadgeContainer>
+          <BadgesGroup
+            text={`Количество выделенных областей: ${data.polygon?.features.length}`}
+            onClickHandler={handleClearPolygon}
+          />
         )}
         <ChoseBtn onClick={handleMapOpen(setIsCityOpen)}>
           <Text>Выбрать город</Text>
           <ChevronIcon />
         </ChoseBtn>
         {data?.city?.id && (
-          <BadgeContainer>
-            <Badge text={data?.city?.name} />
-            <ClearBadge onClickHandler={handleClearCity} text="Стереть" />
-          </BadgeContainer>
+          <BadgesGroup
+            text={data?.city?.name}
+            onClickHandler={handleClearCity}
+          />
         )}
         <ChoseBtn onClick={handleMapOpen(setIsDistrictOpen)}>
           <Text>Выбрать район</Text>
@@ -71,15 +70,6 @@ const Location = () => {
     </>
   );
 };
-
-const ClearBadge = styled(Badge)`
-  cursor: pointer;
-`;
-
-const BadgeContainer = styled.div`
-  display: flex;
-  column-gap: 5px;
-`;
 
 const Text = styled.div`
   color: #676a71;

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { City, FieldAction, FieldName, TFormData } from "./types";
+import { City, FieldAction, TFormData } from "./types";
 import { axiosInstance } from "../../common/axiosInstance";
 import { handleNumFormat } from "./helpers";
 
@@ -217,7 +217,12 @@ const formDataSlicer = createSlice({
       })
       .addCase(fetchCitiesData.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.citiesData = action.payload.data;
+        state.citiesData = action.payload.data
+          ?.map((el) => {
+            el.cities = el.cities.sort((a, b) => a.name.localeCompare(b.name));
+            return el;
+          })
+          ?.sort((a, b) => a.name.localeCompare(b.name));
       })
       .addCase(fetchCitiesData.rejected, (state, action) => {
         state.isError = true;

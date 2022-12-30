@@ -3,16 +3,20 @@ import { AppContext } from "../../common/AppContext";
 import { CloseOutline } from "@styled-icons/evaicons-outline/CloseOutline";
 import styled from "styled-components";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { TFormData } from "../../redux/slicers/types";
-import { fetchCitiesData } from "../../redux/slicers/formDataSlicer";
+import { City, TFormData } from "../../redux/slicers/types";
+import {
+  fetchCitiesData,
+  setPrimitiveField,
+} from "../../redux/slicers/formDataSlicer";
 import ModalWrapper from "../UI/ModalWrapper";
 import CityItem from "./CityItem";
 import SectionHeader from "../UI/SectionHeader";
 import Input from "../UI/Input";
-import Badge from "../UI/Badge";
+import BadgesGroup from "../UI/BadgesGroup";
 
 const CitiesSelect = () => {
   const [inputValue, setInputValue] = useState<string>("");
+  const [filtering, setFiltering] = useState<boolean>(false);
 
   const { isCityOpen, setIsCityOpen } = useContext(AppContext);
 
@@ -33,18 +37,42 @@ const CitiesSelect = () => {
   };
 
   const handleValueChange = (e: any) => {
+    setFiltering(true);
     setInputValue(e.target.value);
+  };
+
+  const handleClearCity = () => {
+    dispatch(
+      setPrimitiveField({ name: "city", value: { id: null, name: "" } })
+    );
   };
 
   const currCitiesValue = useMemo(() => {
     if (citiesData) {
-      const newCitiesData = structuredClone(citiesData);
-      return newCitiesData
-        ?.map((el) => {
-          el.cities = el.cities.sort((a, b) => a.name.localeCompare(b.name));
-          return el;
-        })
-        ?.sort((a, b) => a.name.localeCompare(b.name));
+      if (filtering && inputValue !== "") {
+        const filteredArr = citiesData
+          .map((el) => {
+            if (el.name.toLowerCase().includes(inputValue.toLowerCase())) {
+              return el;
+            }
+
+            const filteredCities = el.cities.filter((el) =>
+              el.name.toLowerCase().includes(inputValue.toLowerCase())
+            );
+
+            if (filteredCities.length !== 0) {
+              return {
+                name: el.name,
+                id: el.id,
+                cities: filteredCities,
+              };
+            }
+          })
+          .filter((el) => el);
+        setFiltering(false);
+        return filteredArr;
+      }
+      return citiesData;
     }
     return null;
   }, [inputValue, citiesData]);
@@ -61,7 +89,9 @@ const CitiesSelect = () => {
           onChangeHandler={handleValueChange}
           value={inputValue}
         />
-        {city?.id && <Badge text={city?.name} />}
+        {city?.id && (
+          <BadgesGroup text={city?.name} onClickHandler={handleClearCity} />
+        )}
         <CitiesWrapper>
           {currCitiesValue &&
             currCitiesValue?.map((el, i) => {
@@ -75,7 +105,7 @@ const CitiesSelect = () => {
 
 const ModalContainer = styled.div`
   display: flex;
-  padding: 20px 20px 60px;
+  padding: 20px;
   flex-direction: column;
   background-color: white;
   width: 500px;
@@ -113,6 +143,7 @@ const StyledWrapper = styled(ModalWrapper)`
   display: flex;
   justify-content: center;
   width: 100%;
+  z-index: 15;
   background-color: #fdfdfd;
 `;
 

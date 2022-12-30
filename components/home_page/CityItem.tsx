@@ -5,7 +5,7 @@ import AreaRow from "../UI/AreaRow";
 import CityPoint from "./CityPoint";
 
 type Props = {
-  data: City;
+  data: City | undefined;
 };
 
 const CityItem: FC<Props> = ({ data }) => {
