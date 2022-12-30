@@ -1,8 +1,18 @@
 import { ChildrenProp } from "../../common/types";
 import styled from "styled-components";
+import { memo } from "react";
 
-const SectionHeader: React.FC<ChildrenProp> = ({ children }) => {
-  return <StyledSectionHeader>{children}</StyledSectionHeader>;
+type Props = {
+  className?: string;
+};
+
+const SectionHeader: React.FC<ChildrenProp & Props> = ({
+  children,
+  className,
+}) => {
+  return (
+    <StyledSectionHeader className={className}>{children}</StyledSectionHeader>
+  );
 };
 
 const StyledSectionHeader = styled.div`
@@ -14,4 +24,4 @@ const StyledSectionHeader = styled.div`
   padding: 20px 20px 8px;
 `;
 
-export default SectionHeader;
+export default memo(SectionHeader);

@@ -12,7 +12,7 @@ const StyledCostContainer = styled.div`
   justify-content: space-between;
   padding: 0 20px 20px;
   align-items: center;
-  gap: 5px;
+  gap: 7px;
 `;
 
 export default CostContainer;

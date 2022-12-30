@@ -1,13 +1,12 @@
-import { Divider, SectionHeader } from "../UI";
 import React, { createRef, useEffect } from "react";
 import { useAppSelector } from "../../redux/hooks";
 import { TFormData } from "../../redux/slicers/types";
 import SimpleForm from "./SimpleForm";
 import { useGetParametersByIdQuery } from "../../redux/APIs/parametersApi";
 import styled from "styled-components";
-import { TagsSection } from "./index";
 import { Refs } from "../../common/types";
 import { setActiveParams } from "../../common/helpers";
+import TagsSection from "./TagsSection";
 
 const Parameters = () => {
   const {

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import styled from "styled-components";
 import { FieldName, TFormData } from "../../redux/slicers/types";
 import { setPrimitiveField } from "../../redux/slicers/formDataSlicer";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { HeaderContainer, SectionHeader } from "./index";
+import SectionHeader from "./SectionHeader";
 
 type Props = {
   label: string;
@@ -61,4 +61,4 @@ const StyledRadioButton = styled.div<{ isActive: boolean }>`
   cursor: pointer;
 `;
 
-export default RadioButton;
+export default memo(RadioButton);

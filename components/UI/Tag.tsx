@@ -1,4 +1,4 @@
-import React, { RefObject } from "react";
+import React, { memo, RefObject } from "react";
 import { ChildrenProp, HandleChangeActiveClick } from "../../common/types";
 import styled from "styled-components";
 
@@ -34,4 +34,4 @@ const StyledTag = styled.div`
   }
 `;
 
-export default Tag;
+export default memo(Tag);

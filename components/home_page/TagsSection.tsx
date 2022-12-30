@@ -1,9 +1,11 @@
-import React from "react";
-import { SectionHeader, Tag, TagsContainer } from "../UI";
+import React, { memo } from "react";
 import { Refs } from "../../common/types";
 import { useAppDispatch } from "../../redux/hooks";
 import { setPrimitiveField } from "../../redux/slicers/formDataSlicer";
 import styled from "styled-components";
+import SectionHeader from "../UI/SectionHeader";
+import TagsContainer from "../UI/TagsContainer";
+import Tag from "../UI/Tag";
 
 type Props = {
   refs?: Refs;
@@ -45,4 +47,4 @@ const Wrapper = styled.div`
   flex-direction: column;
 `;
 
-export default TagsSection;
+export default memo(TagsSection);

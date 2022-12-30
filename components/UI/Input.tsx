@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import React from "react";
+import React, { memo } from "react";
 
 type Props = {
   placeholder: string;
@@ -31,4 +31,4 @@ const StyledInput = styled.input`
   }
 `;
 
-export default Input;
+export default memo(Input);

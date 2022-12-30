@@ -1,45 +1,69 @@
-import { SectionHeader } from "../UI";
-import React, { useContext, useState } from "react";
+import React, { Dispatch, SetStateAction, useContext } from "react";
 import styled from "styled-components";
 import { ChevronRight } from "@styled-icons/bootstrap";
-import { useRouter } from "next/router";
-import { useAppSelector } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { TFormData } from "../../redux/slicers/types";
 import { AppContext } from "../../common/AppContext";
+import SectionHeader from "../UI/SectionHeader";
+import Badge from "../UI/Badge";
+import { setPrimitiveField } from "../../redux/slicers/formDataSlicer";
 
 const Location = () => {
   const { data } = useAppSelector<TFormData>((state) => state.formData);
 
-  const { isMapOpen, setIsMapOpen } = useContext(AppContext);
+  const dispatch = useAppDispatch();
 
-  const router = useRouter();
+  const { setIsMapOpen, setIsCityOpen, setIsDistrictOpen, setIsMetroOpen } =
+    useContext(AppContext);
 
-  const handleMapOpen = () => {
-    setIsMapOpen!(true);
+  const handleMapOpen =
+    (setStateAction: Dispatch<SetStateAction<boolean>> | undefined) => () => {
+      if (setStateAction) {
+        setStateAction(true);
+      }
+    };
+
+  const handleClearPolygon = () => {
+    dispatch(setPrimitiveField({ name: "polygon", value: null }));
+  };
+
+  const handleClearCity = () => {
+    dispatch(
+      setPrimitiveField({ name: "city", value: { id: null, name: "" } })
+    );
   };
 
   return (
     <>
       <SectionHeader>Расположение</SectionHeader>
       <ButtonsContainer>
-        <ChoseBtn onClick={handleMapOpen}>
+        <ChoseBtn onClick={handleMapOpen(setIsMapOpen)}>
           <Text>Нарисовать на карте</Text>
           <ChevronIcon />
         </ChoseBtn>
         {data.polygon && (
-          <Badge>
-            Количество выделенных областей: {data.polygon?.features.length}
-          </Badge>
+          <BadgeContainer>
+            <Badge
+              text={`Количество выделенных областей: ${data.polygon?.features.length}`}
+            />
+            <ClearBadge onClickHandler={handleClearPolygon} text="Стереть" />
+          </BadgeContainer>
         )}
-        <ChoseBtn>
+        <ChoseBtn onClick={handleMapOpen(setIsCityOpen)}>
           <Text>Выбрать город</Text>
           <ChevronIcon />
         </ChoseBtn>
-        <ChoseBtn>
+        {data?.city?.id && (
+          <BadgeContainer>
+            <Badge text={data?.city?.name} />
+            <ClearBadge onClickHandler={handleClearCity} text="Стереть" />
+          </BadgeContainer>
+        )}
+        <ChoseBtn onClick={handleMapOpen(setIsDistrictOpen)}>
           <Text>Выбрать район</Text>
           <ChevronIcon />
         </ChoseBtn>
-        <ChoseBtn>
+        <ChoseBtn onClick={handleMapOpen(setIsMetroOpen)}>
           <Text>Выбрать метро</Text>
           <ChevronIcon />
         </ChoseBtn>{" "}
@@ -48,18 +72,13 @@ const Location = () => {
   );
 };
 
-const Badge = styled.div`
+const ClearBadge = styled(Badge)`
+  cursor: pointer;
+`;
+
+const BadgeContainer = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #d5d9e1;
-  border-radius: 3px;
-  height: 28px;
-  font-size: 14px;
-  color: #676a71;
-  width: fit-content;
-  padding: 0 10px;
-  cursor: default;
+  column-gap: 5px;
 `;
 
 const Text = styled.div`

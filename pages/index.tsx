@@ -1,22 +1,19 @@
-import React, { createRef, useEffect, useState } from "react";
-import styled from "styled-components";
-import {
-  Divider,
-  GeneralWrapper,
-  HeaderContainer,
-  SaveButton,
-  SectionHeader,
-} from "../components/UI";
-import { TagsSection } from "../components/home_page";
+import React, { createRef, useEffect } from "react";
 import { Refs } from "../common/types";
-import RadioButton from "../components/UI/RadioButton";
-import SimpleForm from "../components/home_page/SimpleForm";
-import Location from "../components/home_page/Location";
 import { useAppSelector } from "../redux/hooks";
 import { TFormData } from "../redux/slicers/types";
 import { setActiveParams } from "../common/helpers";
-import Map from "../components/home_page/Map";
+import GeneralWrapper from "../components/UI/GeneralWrapper";
+import HeaderContainer from "../components/UI/HeaderContainer";
+import SimpleForm from "../components/home_page/SimpleForm";
+import TagsSection from "../components/home_page/TagsSection";
+import RadioButton from "../components/UI/RadioButton";
+import SaveButton from "../components/UI/SaveButton";
+import Divider from "../components/UI/Divider";
+import CitiesSelect from "../components/home_page/CitiesSelect";
 import Parameters from "../components/home_page/Parameters";
+import Map from "../components/home_page/Map";
+import Location from "../components/home_page/Location";
 
 const Home = () => {
   const { data } = useAppSelector<TFormData>((state) => state.formData);
@@ -125,6 +122,7 @@ const Home = () => {
         <Divider />
         {data?.category && <Parameters />}
       </GeneralWrapper>
+      <CitiesSelect />
       <SaveButton />
       <Map />
     </>

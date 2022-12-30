@@ -17,7 +17,10 @@ export const fetchCitiesData = createAsyncThunk<{ data: City[] }>(
 const initialState: TFormData = {
   citiesData: null,
   data: {
-    city: null,
+    city: {
+      name: "",
+      id: null,
+    },
     metros: null,
     districts: null,
     polygon: null,
@@ -160,7 +163,10 @@ const formDataSlicer = createSlice({
     },
     clearFormData(state) {
       state.data = {
-        city: null,
+        city: {
+          name: "",
+          id: null,
+        },
         metros: null,
         districts: null,
         minPrice: "",

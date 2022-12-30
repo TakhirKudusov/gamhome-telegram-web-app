@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { ChildrenProp } from "../../common/types";
 import styled from "styled-components";
 
@@ -13,4 +13,4 @@ const StyledTagsContainer = styled.div`
   padding: 0 20px 20px;
 `;
 
-export default TagsContainer;
+export default memo(TagsContainer);

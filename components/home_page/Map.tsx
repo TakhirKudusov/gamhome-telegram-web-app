@@ -1,23 +1,34 @@
 import styled from "styled-components";
-import React, { useContext, useEffect } from "react";
-import { mapboxHandler } from "../../common/geolocation.helper";
+import React, { useContext, useEffect, useState } from "react";
 import { ArrowIosBackOutline } from "@styled-icons/evaicons-outline/ArrowIosBackOutline";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { TFormData } from "../../redux/slicers/types";
 import { AppContext } from "../../common/AppContext";
+import ModalWrapper from "../UI/ModalWrapper";
+import { useMapBox } from "../../common/useMapBox";
 
 const Map = () => {
+  const [mounted, setMounted] = useState<boolean>(false);
   const { isMapOpen, setIsMapOpen } = useContext(AppContext);
+
+  const dispatch = useAppDispatch();
+
+  const [map, draw, init] = useMapBox(dispatch);
 
   const {
     data: { polygon },
   } = useAppSelector<TFormData>((state) => state.formData);
 
-  const dispatch = useAppDispatch();
+  useEffect(() => {
+    init();
+  }, []);
 
   useEffect(() => {
-    mapboxHandler(dispatch, polygon);
-  }, []);
+    if (polygon === null && mounted) {
+      draw.deleteAll();
+    }
+    if (!mounted) setMounted(true);
+  }, [polygon]);
 
   const handleReturnClick = () => {
     setIsMapOpen!(false);
@@ -25,12 +36,12 @@ const Map = () => {
 
   return (
     <>
-      <Wrapper isOpen={isMapOpen as boolean}>
+      <ModalWrapper isOpen={isMapOpen as boolean}>
         <MapContainer id="map" />
         <ReturnButton onClick={handleReturnClick}>
           <ArrowIcon />
         </ReturnButton>
-      </Wrapper>
+      </ModalWrapper>
     </>
   );
 };
@@ -60,14 +71,6 @@ const ReturnButton = styled.div`
 const MapContainer = styled.div`
   width: 100%;
   height: 100%;
-`;
-
-const Wrapper = styled.div<{ isOpen: boolean }>`
-  visibility: ${({ isOpen }) => (isOpen ? "visible" : "hidden")};
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
 `;
 
 export default Map;

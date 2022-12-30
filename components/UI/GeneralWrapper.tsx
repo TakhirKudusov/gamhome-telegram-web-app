@@ -1,19 +1,15 @@
 import { ChildrenProp } from "../../common/types";
 import styled from "styled-components";
-import { useContext } from "react";
-import { AppContext } from "../../common/AppContext";
 
 const GeneralWrapper: React.FC<ChildrenProp> = ({ children }) => {
-  const { isMapOpen } = useContext(AppContext);
-
   return (
     <Wrapper>
-      <Container isOpen={isMapOpen as boolean}>{children}</Container>
+      <Container>{children}</Container>
     </Wrapper>
   );
 };
 
-const Container = styled.div<{ isOpen: boolean }>`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   padding-bottom: 60px;

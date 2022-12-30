@@ -1,5 +1,4 @@
 import React, { SyntheticEvent } from "react";
-import { CostContainer, Input, SectionHeader } from "../UI";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import {
   setParamInput,
@@ -8,6 +7,9 @@ import {
 import { FieldName, TFormData } from "../../redux/slicers/types";
 import styled from "styled-components";
 import { AddParameters } from "../../common/types";
+import SectionHeader from "../UI/SectionHeader";
+import CostContainer from "../UI/CostContainer";
+import Input from "../UI/Input";
 
 type Props = {
   header: string;

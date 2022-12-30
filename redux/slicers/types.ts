@@ -16,30 +16,36 @@ type FieldName =
   | "fee"
   | "polygon";
 
+type Params = {
+  id: number | null;
+  name: string;
+};
+
 type FieldAction = {
   payload: {
     name: FieldName;
-    value: string | number | boolean | undefined | null | any[];
+    value: string | number | boolean | undefined | Params | any[] | null;
     addType?: AddParameters;
   };
   type: string;
 };
 
-type Params = {
-  id: number;
-  name: string;
+type Metros = Params & {
+  lat: number;
+  lng: number;
+};
+
+type MetroLines = Params & {
+  color: string;
+  metros: Metros[];
+};
+
+type Cities = Params & {
+  metroLines: MetroLines[];
 };
 
 type City = Params & {
-  cities: (Params & {
-    metroLines: (Params & {
-      color: string;
-      metros: (Params & {
-        lat: number;
-        lng: number;
-      })[];
-    })[];
-  })[];
+  cities: Cities[];
 };
 
 type ParametersObj = Partial<Record<AddParameters, string | null>>;
@@ -51,9 +57,9 @@ type Data = {
   type: 1 | 2 | null;
   minPrice: string;
   maxPrice: string;
-  city: number | null;
-  metros: number[] | null;
-  districts: number[] | null;
+  city: Params | null;
+  metros: Params[] | null;
+  districts: Params[] | null;
   author: 2 | 3 | null;
   params: ParametersObj;
   minKmMetro: string;
@@ -68,4 +74,12 @@ type TFormData = {
   isError: boolean;
 };
 
-export type { TFormData, FieldAction, City, FieldName };
+export type {
+  TFormData,
+  FieldAction,
+  City,
+  FieldName,
+  Cities,
+  MetroLines,
+  Metros,
+};
