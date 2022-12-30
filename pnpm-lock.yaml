@@ -7,6 +7,7 @@ specifiers:
   '@reduxjs/toolkit': ^1.9.1
   '@styled-icons/bootstrap': ^10.47.0
   '@styled-icons/evaicons-outline': ^10.46.0
+  '@styled-icons/fluentui-system-filled': ^10.47.0
   '@styled-icons/material': ^10.47.0
   '@types/mapbox-gl': ^2.7.10
   '@types/mapbox__mapbox-gl-draw': ^1.3.3
@@ -37,6 +38,7 @@ dependencies:
   '@reduxjs/toolkit': 1.9.1_k4ae6lp43ej6mezo3ztvx6pykq
   '@styled-icons/bootstrap': 10.47.0_56nicwxcbpehznvjhlpvpy75bu
   '@styled-icons/evaicons-outline': 10.46.0_56nicwxcbpehznvjhlpvpy75bu
+  '@styled-icons/fluentui-system-filled': 10.47.0_56nicwxcbpehznvjhlpvpy75bu
   '@styled-icons/material': 10.47.0_56nicwxcbpehznvjhlpvpy75bu
   '@types/node': 18.11.17
   '@types/react': 18.0.26
@@ -536,6 +538,18 @@ packages:
 
   /@styled-icons/evaicons-outline/10.46.0_56nicwxcbpehznvjhlpvpy75bu:
     resolution: {integrity: sha512-+tHb/Ir6G1e+rSJ2YKgm2vzjF80JoXWEmoC48exFrQEKQkJPSWtsqKdROkfANKrY9AFnRKhJQ+9fHhnjS+V/OA==}
+    peerDependencies:
+      react: '*'
+      styled-components: '*'
+    dependencies:
+      '@babel/runtime': 7.20.7
+      '@styled-icons/styled-icon': 10.7.0_56nicwxcbpehznvjhlpvpy75bu
+      react: 18.2.0
+      styled-components: 5.3.6_7i5myeigehqah43i5u7wbekgba
+    dev: false
+
+  /@styled-icons/fluentui-system-filled/10.47.0_56nicwxcbpehznvjhlpvpy75bu:
+    resolution: {integrity: sha512-jAO8bs9SY/5Xu2vxg5sJmnD5YA966G2m2qU4ezlDbLDIXSaX/1qUBUivBFSWCDn4q5rslegzD1rhc9FncgPbSw==}
     peerDependencies:
       react: '*'
       styled-components: '*'

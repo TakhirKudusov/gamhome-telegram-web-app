@@ -16,7 +16,9 @@ import Map from "../components/home_page/Map";
 import Location from "../components/home_page/Location";
 
 const Home = () => {
-  const { data } = useAppSelector<TFormData>((state) => state.formData);
+  const { data, isLoading } = useAppSelector<TFormData>(
+    (state) => state.formData
+  );
 
   const roomTagRef = createRef();
   const flatTagRef = createRef();

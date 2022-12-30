@@ -3,7 +3,7 @@ import { AppContext } from "../../common/AppContext";
 import { CloseOutline } from "@styled-icons/evaicons-outline/CloseOutline";
 import styled from "styled-components";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { City, TFormData } from "../../redux/slicers/types";
+import { TFormData } from "../../redux/slicers/types";
 import {
   fetchCitiesData,
   setPrimitiveField,
@@ -13,6 +13,7 @@ import CityItem from "./CityItem";
 import SectionHeader from "../UI/SectionHeader";
 import Input from "../UI/Input";
 import BadgesGroup from "../UI/BadgesGroup";
+import Spinner from "../UI/Spinner";
 
 const CitiesSelect = () => {
   const [inputValue, setInputValue] = useState<string>("");
@@ -72,6 +73,7 @@ const CitiesSelect = () => {
         setFiltering(false);
         return filteredArr;
       }
+      setFiltering(false);
       return citiesData;
     }
     return null;
@@ -93,10 +95,14 @@ const CitiesSelect = () => {
           <BadgesGroup text={city?.name} onClickHandler={handleClearCity} />
         )}
         <CitiesWrapper>
-          {currCitiesValue &&
+          {filtering ? (
+            <Spinner />
+          ) : (
+            currCitiesValue &&
             currCitiesValue?.map((el, i) => {
               return <CityItem data={el} key={`${el?.name}${i}`} />;
-            })}
+            })
+          )}
         </CitiesWrapper>
       </ModalContainer>
     </StyledWrapper>
