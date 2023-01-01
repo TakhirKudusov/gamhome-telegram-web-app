@@ -1,129 +1,69 @@
-import React, { createRef, useContext, useEffect, useMemo } from "react";
-import { Refs } from "../common/types";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import React, { useContext, useEffect, useMemo } from "react";
+import { useAppDispatch, useAppSelector } from "../redux/utils/hooks";
 import { TFormData } from "../redux/slicers/types";
-import { setActiveParams } from "../common/helpers";
-import GeneralWrapper from "../components/UI/GeneralWrapper";
-import HeaderContainer from "../components/UI/HeaderContainer";
-import SimpleForm from "../components/home_page/SimpleForm";
-import TagsSection from "../components/home_page/TagsSection";
-import RadioButton from "../components/UI/RadioButton";
-import SaveButton from "../components/UI/SaveButton";
-import Divider from "../components/UI/Divider";
-import Parameters from "../components/home_page/Parameters";
-import Map from "../components/home_page/Map";
-import Location from "../components/home_page/Location";
+import { setActiveParams } from "../common/utils/helpers";
+import GeneralWrapper from "../components/UI/wrapper_ui/GeneralWrapper";
+import HeaderContainer from "../components/UI/container_ui/HeaderContainer";
+import SimpleForm from "../components/home_page/simple_sections/SimpleForm";
+import TagsSection from "../components/home_page/simple_sections/TagsSection";
+import RadioButton from "../components/UI/radio_button_ui/RadioButton";
+import SaveButton from "../components/UI/menu_buttons/SaveButton";
+import Divider from "../components/UI/divider_ui/Divider";
+import Parameters from "../components/home_page/simple_sections/Parameters";
+import Map from "../components/home_page/location/Map";
+import Location from "../components/home_page/location/Location";
 import {
   fetchCitiesData,
   setPrimitiveField,
 } from "../redux/slicers/formDataSlicer";
-import Select from "../components/home_page/Select";
-import { AppContext } from "../common/AppContext";
+import { AppContext } from "../common/context/AppContext";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { setDisabled, setEnabled } from "../redux/slicers/disableSelectsSlicer";
+import Select from "../components/home_page/select/Select";
+import { handleClearSelect, handleGetData } from "../common/helpers/helpers";
+import { useGetRefs } from "../common/custom_hooks/useGetRefs";
+import {
+  authorValues,
+  categoryValues,
+  typeValues,
+} from "../common/utils/constants";
+import { RefType } from "../common/utils/enums";
 
 const Home = () => {
   const { data, citiesData, isLoading, isError } = useAppSelector<TFormData>(
     (state) => state.formData
   );
 
-  const { isCityOpen, setIsCityOpen, isDistrictOpen, setIsDistrictOpen } =
-    useContext(AppContext);
+  const {
+    isCityOpen,
+    setIsCityOpen,
+    isDistrictOpen,
+    setIsDistrictOpen,
+    isMetroOpen,
+    setIsMetroOpen,
+  } = useContext(AppContext);
 
   const dispatch = useAppDispatch();
 
-  const handleClearSelect = (name: "city" | "metros" | "districts") => () => {
-    dispatch(
-      setPrimitiveField({
-        name,
-        value: name === "city" ? { id: null, name: "" } : [],
-      })
-    );
-  };
+  const districts = useMemo(
+    handleGetData(
+      data,
+      citiesData,
+      "districts",
+      "isDistrictsDisabled",
+      dispatch
+    ),
+    [data.city]
+  );
 
-  const districts = useMemo(() => {
-    if (data.city?.id) {
-      const districtsData = citiesData
-        ?.map((el) => {
-          for (let i = 0; i < el.cities.length; i++) {
-            if (el.cities[i].id === data.city?.id) {
-              return el.cities[i].districts;
-            }
-          }
-        })
-        .filter((el) => el)[0];
-      if (districtsData?.length === 0) {
-        queueMicrotask(() => dispatch(setDisabled("isDistrictsDisabled")));
-      } else {
-        queueMicrotask(() => dispatch(setEnabled("isDistrictsDisabled")));
-      }
-      return districtsData;
-    }
-    return null;
-  }, [data.city]);
+  const metros = useMemo(
+    handleGetData(data, citiesData, "metroLines", "isMetrosDisabled", dispatch),
+    [data.city]
+  );
 
-  const roomTagRef = createRef();
-  const flatTagRef = createRef();
-  const houseTagRef = createRef();
-
-  const categoryRefsArr: Refs = {
-    refs: [
-      {
-        value: 3,
-        ref: roomTagRef,
-        children: "Комната",
-      },
-      {
-        value: 2,
-        ref: flatTagRef,
-        children: "Квартира",
-      },
-      {
-        value: 4,
-        ref: houseTagRef,
-        children: "Дом",
-      },
-    ],
-    type: "category",
-  };
-
-  const rentTagRef = createRef();
-  const buyTagRef = createRef();
-
-  const typeArr: Refs = {
-    refs: [
-      {
-        value: 2,
-        ref: rentTagRef,
-        children: "Снять",
-      },
-      {
-        value: 1,
-        ref: buyTagRef,
-        children: "Купить",
-      },
-    ],
-    type: "type",
-  };
-
-  const agentRef = createRef();
-  const ownerRef = createRef();
-
-  const authorArr: Refs = {
-    refs: [
-      {
-        value: 2,
-        ref: agentRef,
-        children: "Агент",
-      },
-      {
-        value: 3,
-        ref: ownerRef,
-        children: "Собственник",
-      },
-    ],
-    type: "author",
-  };
+  const categoryRefsArr = useGetRefs(categoryValues, RefType.CATEGORY);
+  const typeArr = useGetRefs(typeValues, RefType.TYPE);
+  const authorArr = useGetRefs(authorValues, RefType.AUTHOR);
 
   useEffect(() => {
     dispatch(setPrimitiveField({ name: "districts", value: [] }));
@@ -189,7 +129,7 @@ const Home = () => {
         targetItem={data.city}
         isOpen={isCityOpen}
         setIsOpen={setIsCityOpen}
-        handleClearAction={handleClearSelect("city")}
+        handleClearAction={handleClearSelect("city", dispatch)}
         header="Пожалуйста, выберите город"
         placeholder="Введите название города"
       />
@@ -199,9 +139,20 @@ const Home = () => {
         targetItem={data.districts}
         isOpen={isDistrictOpen}
         setIsOpen={setIsDistrictOpen}
-        handleClearAction={handleClearSelect("districts")}
+        handleClearAction={handleClearSelect("districts", dispatch)}
         header="Пожалуйста, выберите район"
         placeholder="Введите название района"
+        mode="multi"
+      />
+      <Select
+        data={metros as Params[]}
+        type="metros"
+        targetItem={data.metros}
+        isOpen={isMetroOpen}
+        setIsOpen={setIsMetroOpen}
+        handleClearAction={handleClearSelect("metros", dispatch)}
+        header="Пожалуйста, выберите станцию метро"
+        placeholder="Введите название станции метро"
         mode="multi"
       />
       <SaveButton />

@@ -1,4 +1,4 @@
-import { AddParameters } from "../../common/types";
+import { AddParameters } from "../../common/utils/types";
 
 type FieldName =
   | "isAgent"

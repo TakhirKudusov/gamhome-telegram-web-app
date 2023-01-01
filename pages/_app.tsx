@@ -3,7 +3,7 @@ import type { AppProps } from "next/app";
 import "@fontsource/roboto";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { wrapper } from "../redux/store";
-import { ContextProvider } from "../common/AppContext";
+import { ContextProvider } from "../common/context/AppContext";
 
 function App({ Component, pageProps }: AppProps) {
   return (
