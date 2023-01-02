@@ -52,10 +52,10 @@ const handleGetData =
           }
         })
         .filter((el) => el)[0];
-      if (newData?.length === 0) {
-        queueMicrotask(() => dispatch(setDisabled(disabledKey)));
-      } else {
+      if (!!newData) {
         queueMicrotask(() => dispatch(setEnabled(disabledKey)));
+      } else {
+        queueMicrotask(() => dispatch(setDisabled(disabledKey)));
       }
       return newData;
     }

@@ -1,10 +1,19 @@
 import { Dispatch, SetStateAction } from "react";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-import { City, FieldName, MetroLines } from "../../../redux/slicers/types";
-import { setComplexField } from "../../../redux/slicers/formDataSlicer";
+import {
+  Cities,
+  City,
+  FieldName,
+  MetroLines,
+  Metros,
+} from "../../../redux/slicers/types";
+import {
+  setComplexField,
+  setPrimitiveField,
+} from "../../../redux/slicers/formDataSlicer";
 import { AppDispatch } from "../../../redux/utils/types";
 
-const setActiveDistrict = (
+const setActive = (
   setActive: Dispatch<SetStateAction<boolean>>,
   districts: Params[],
   data: City | MetroLines | Params | undefined
@@ -17,23 +26,6 @@ const setActiveDistrict = (
     }
   }
 };
-
-const handleCheckClick =
-  (
-    type: "cities" | "districts" | "metros",
-    dispatch: AppDispatch,
-    data: City | MetroLines | Params | undefined
-  ) =>
-  () => {
-    if (type === "districts") {
-      dispatch(
-        setComplexField({
-          name: type as FieldName,
-          value: { id: data?.id, name: data?.name },
-        })
-      );
-    }
-  };
 
 const handleClickClose =
   (setIsOpen: Dispatch<SetStateAction<boolean>> | undefined) => () => {
@@ -89,10 +81,47 @@ const handleFilterData =
     return null;
   };
 
+const handleSetComplexField = (
+  dispatch: AppDispatch,
+  type: "cities" | "districts" | "metros",
+  data: Cities | Metros | Params | undefined
+) => {
+  dispatch(
+    setComplexField({
+      name: type as FieldName,
+      value: { id: data?.id, name: data?.name },
+    })
+  );
+};
+
+const handleSetDataPoint =
+  (
+    dispatch: AppDispatch,
+    type: "cities" | "districts" | "metros",
+    data: Cities | Metros | Params | undefined,
+    isMetroChild?: boolean
+  ) =>
+  () => {
+    if (type === "cities") {
+      dispatch(
+        setPrimitiveField({
+          name: "city",
+          value: { id: data?.id, name: data?.name },
+        })
+      );
+    }
+    if (type === "districts") {
+      handleSetComplexField(dispatch, type, data);
+    }
+    if (type === "metros" && isMetroChild) {
+      handleSetComplexField(dispatch, type, data);
+    }
+  };
+
 export {
-  setActiveDistrict,
-  handleCheckClick,
+  setActive,
   handleClickClose,
   handleValueChange,
   handleFilterData,
+  handleSetDataPoint,
 };

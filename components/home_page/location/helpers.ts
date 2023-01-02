@@ -21,8 +21,14 @@ const handleClearCity = (dispatch: AppDispatch) => () => {
   dispatch(setPrimitiveField({ name: "city", value: { id: null, name: "" } }));
 };
 
-const handleClearDistricts = (dispatch: AppDispatch) => () => {
-  dispatch(setPrimitiveField({ name: "districts", value: [] }));
-};
+const handleClearComplexField =
+  (dispatch: AppDispatch, type: "districts" | "metros") => () => {
+    dispatch(setPrimitiveField({ name: type, value: [] }));
+  };
 
-export { openModal, handleClearPolygon, handleClearDistricts, handleClearCity };
+export {
+  openModal,
+  handleClearPolygon,
+  handleClearComplexField,
+  handleClearCity,
+};

@@ -10,7 +10,7 @@ import { setPrimitiveField } from "../../../redux/slicers/formDataSlicer";
 import BadgesGroup from "../../UI/badge_ui/BadgesGroup";
 import {
   handleClearCity,
-  handleClearDistricts,
+  handleClearComplexField,
   handleClearPolygon,
   openModal,
 } from "./helpers";
@@ -74,7 +74,7 @@ const Location = () => {
           <BadgesGroup
             text={data?.districts[0]?.name}
             quantity={data?.districts.length}
-            onClickHandler={handleClearDistricts(dispatch)}
+            onClickHandler={handleClearComplexField(dispatch, "districts")}
           />
         )}
         <ChoseBtn
@@ -86,7 +86,14 @@ const Location = () => {
         >
           <Text>Выбрать метро</Text>
           <ChevronIcon />
-        </ChoseBtn>{" "}
+        </ChoseBtn>
+        {data?.metros.length !== 0 && (
+          <BadgesGroup
+            text={data?.metros[0]?.name}
+            quantity={data?.metros.length}
+            onClickHandler={handleClearComplexField(dispatch, "metros")}
+          />
+        )}
       </ButtonsContainer>
     </>
   );
