@@ -3,8 +3,92 @@ import mapboxgl from "mapbox-gl";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { AppDispatch } from "../../redux/utils/types";
 import { setPrimitiveField } from "../../redux/slicers/formDataSlicer";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { setEnabled } from "../../redux/slicers/disableSelectsSlicer";
+
+const handleGetGeolocation = async (latitude: number, longitude: number) => {
+  try {
+    const {
+      data: { results },
+    } = await axios.get(
+      "https://api.opencagedata.com/geocode/v1/json?" +
+        "key=b73ca574dfab4647b2296dfed9865494" +
+        "&q=" +
+        encodeURIComponent(latitude + "," + longitude) +
+        "&pretty=1" +
+        "&no_annotations=1" +
+        "&language=en"
+    );
+    return results;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const initMap = (results: any[], latitude: number, longitude: number) => {
+  return new mapboxgl.Map({
+    container: "map",
+    style: "mapbox://styles/mapbox/streets-v12",
+    center:
+      results[0].components.country !== "Russia"
+        ? [37.61556, 55.75222]
+        : [longitude, latitude],
+    zoom: 12,
+  });
+};
+
+const initDraw = () => {
+  return new MapboxDraw({
+    displayControlsDefault: false,
+    controls: {
+      polygon: true,
+      trash: true,
+    },
+    defaultMode: "draw_polygon",
+  });
+};
+
+const addNavigation = (map: mapboxgl.Map) => {
+  map.addControl(
+    new mapboxgl.NavigationControl({
+      visualizePitch: true,
+    }),
+    "bottom-right"
+  );
+};
+
+const addGeoLocate = (map: mapboxgl.Map) => {
+  map.addControl(
+    new mapboxgl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true,
+      },
+      trackUserLocation: true,
+      showUserHeading: true,
+    }),
+    "bottom-left"
+  );
+};
+
+const updateArea = (dispatch: AppDispatch, draw: MapboxDraw) => (e: any) => {
+  if (e.type === "draw.create" || e.type === "draw.update") {
+    const data = draw.getAll();
+    dispatch(
+      setPrimitiveField({
+        name: "polygon",
+        value: data as unknown as any[],
+      })
+    );
+  }
+  if (e.type === "draw.delete") {
+    dispatch(
+      setPrimitiveField({
+        name: "polygon",
+        value: null,
+      })
+    );
+  }
+};
 
 const useMapBox = (dispatch: AppDispatch): any => {
   const [draw, setDraw] = useState<any | null>(null);
@@ -14,91 +98,29 @@ const useMapBox = (dispatch: AppDispatch): any => {
     "pk.eyJ1IjoidGFraGlya3VkdXNvdiIsImEiOiJjbDJ5eGNtcGUwNTQ1M2ptcWNvdWIwcDBlIn0.Nr0AAp96Ep_eXrbKkyjCOw";
 
   const init = async () => {
-    try {
-      if (navigator?.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          async ({ coords: { latitude, longitude } }) => {
-            const {
-              data: { results },
-            } = await axios.get(
-              "https://api.opencagedata.com/geocode/v1/json?" +
-                "key=b73ca574dfab4647b2296dfed9865494" +
-                "&q=" +
-                encodeURIComponent(latitude + "," + longitude) +
-                "&pretty=1" +
-                "&no_annotations=1" +
-                "&language=en"
-            );
-            const map = new mapboxgl.Map({
-              container: "map",
-              style: "mapbox://styles/mapbox/streets-v12",
-              center:
-                results[0].components.country !== "Russia"
-                  ? [37.61556, 55.75222]
-                  : [longitude, latitude],
-              zoom: 12,
-            });
-            const draw = new MapboxDraw({
-              displayControlsDefault: false,
-              controls: {
-                polygon: true,
-                trash: true,
-              },
-              defaultMode: "draw_polygon",
-            });
+    if (navigator?.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async ({ coords: { latitude, longitude } }) => {
+          const results = await handleGetGeolocation(latitude, longitude);
 
-            map.addControl(
-              new mapboxgl.GeolocateControl({
-                positionOptions: {
-                  enableHighAccuracy: true,
-                },
-                trackUserLocation: true,
-                showUserHeading: true,
-              }),
-              "bottom-left"
-            );
+          const map = initMap(results, latitude, longitude);
+          const draw = initDraw();
 
-            map.addControl(
-              new mapboxgl.NavigationControl({
-                visualizePitch: true,
-              }),
-              "bottom-right"
-            );
-            map.addControl(draw, "top-right");
+          addNavigation(map);
+          addGeoLocate(map);
 
-            setMap(map);
-            setDraw(draw);
+          map.addControl(draw, "top-right");
 
-            const updateArea = (e: any) => {
-              if (e.type === "draw.create" || e.type === "draw.update") {
-                const data = draw.getAll();
-                dispatch(
-                  setPrimitiveField({
-                    name: "polygon",
-                    value: data as unknown as any[],
-                  })
-                );
-              }
-              if (e.type === "draw.delete") {
-                dispatch(
-                  setPrimitiveField({
-                    name: "polygon",
-                    value: null,
-                  })
-                );
-              }
-            };
+          setMap(map);
+          setDraw(draw);
 
-            map.on("draw.create", updateArea);
-            map.on("draw.delete", updateArea);
-            map.on("draw.update", updateArea);
+          map.on("draw.create", updateArea(dispatch, draw));
+          map.on("draw.delete", updateArea(dispatch, draw));
+          map.on("draw.update", updateArea(dispatch, draw));
 
-            dispatch(setEnabled("isMapDisabled"));
-          }
-        );
-      }
-    } catch (error) {
-      console.log(error);
+          dispatch(setEnabled("isMapDisabled"));
+        }
+      );
     }
   };
 

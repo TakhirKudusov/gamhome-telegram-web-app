@@ -17,6 +17,11 @@ import BadgesGroup from "../../UI/badge_ui/BadgesGroup";
 import Spinner from "../../UI/spinner/Spinner";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import Badge from "../../UI/badge_ui/Badge";
+import {
+  handleClickClose,
+  handleFilterData,
+  handleValueChange,
+} from "./helpers";
 
 type Props = {
   data: City[] | MetroLines[] | Params[] | null;
@@ -44,56 +49,21 @@ const Select: FC<Props> = ({
   const [inputValue, setInputValue] = useState<string>("");
   const [filtering, setFiltering] = useState<boolean>(false);
 
-  const handleClickClose = () => {
-    if (setIsOpen) setIsOpen(false);
-  };
-
-  const handleValueChange = (e: any) => {
-    setFiltering(true);
-    setInputValue(e.target.value);
-  };
-
-  const currValue = useMemo(() => {
-    if (data) {
-      if (filtering && inputValue !== "") {
-        const filteredArr = data
-          .map((el) => {
-            if (el.name.toLowerCase().includes(inputValue.toLowerCase())) {
-              return el;
-            }
-            if (type !== "districts") {
-              const filteredChildren = (el as any)[type].filter((el: any) =>
-                el.name.toLowerCase().includes(inputValue.toLowerCase())
-              );
-              if (filteredChildren.length !== 0) {
-                return {
-                  name: el.name,
-                  id: el.id,
-                  [type]: filteredChildren,
-                };
-              }
-            }
-          })
-          .filter((el) => el);
-        setFiltering(false);
-        return filteredArr;
-      }
-      setFiltering(false);
-      return data;
-    }
-    return null;
-  }, [inputValue, data]);
+  const currValue = useMemo(
+    handleFilterData(data, filtering, inputValue, type, setFiltering),
+    [inputValue, data]
+  );
 
   return (
     <StyledWrapper isOpen={isOpen}>
       <ModalContainer>
         <HeaderContainer>
           <StyledHeader>{header}</StyledHeader>
-          <CloseIcon onClick={handleClickClose} />
+          <CloseIcon onClick={handleClickClose(setIsOpen)} />
         </HeaderContainer>
         <Input
           placeholder={placeholder}
-          onChangeHandler={handleValueChange}
+          onChangeHandler={handleValueChange(setFiltering, setInputValue)}
           value={inputValue}
         />
         {mode === "multi"

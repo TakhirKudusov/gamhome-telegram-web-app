@@ -8,6 +8,12 @@ import SectionHeader from "../../UI/section_header_ui/SectionHeader";
 import Badge from "../../UI/badge_ui/Badge";
 import { setPrimitiveField } from "../../../redux/slicers/formDataSlicer";
 import BadgesGroup from "../../UI/badge_ui/BadgesGroup";
+import {
+  handleClearCity,
+  handleClearDistricts,
+  handleClearPolygon,
+  openModal,
+} from "./helpers";
 
 const Location = () => {
   const { data } = useAppSelector<TFormData>((state) => state.formData);
@@ -24,38 +30,13 @@ const Location = () => {
   const { setIsMapOpen, setIsCityOpen, setIsDistrictOpen, setIsMetroOpen } =
     useContext(AppContext);
 
-  const handleMapOpen =
-    (
-      setStateAction: Dispatch<SetStateAction<boolean>> | undefined,
-      isDisabled: boolean
-    ) =>
-    () => {
-      if (setStateAction && !isDisabled) {
-        setStateAction(true);
-      }
-    };
-
-  const handleClearPolygon = () => {
-    dispatch(setPrimitiveField({ name: "polygon", value: null }));
-  };
-
-  const handleClearCity = () => {
-    dispatch(
-      setPrimitiveField({ name: "city", value: { id: null, name: "" } })
-    );
-  };
-
-  const handleClearDistricts = () => {
-    dispatch(setPrimitiveField({ name: "districts", value: [] }));
-  };
-
   return (
     <>
       <SectionHeader>Расположение</SectionHeader>
       <ButtonsContainer>
         <ChoseBtn
           disabled={isMapDisabled}
-          onClick={handleMapOpen(setIsMapOpen, isMapDisabled)}
+          onClick={openModal(setIsMapOpen, isMapDisabled)}
         >
           <Text>Нарисовать на карте</Text>
           <ChevronIcon />
@@ -63,12 +44,12 @@ const Location = () => {
         {data.polygon && (
           <BadgesGroup
             text={`Количество выделенных областей: ${data.polygon?.features.length}`}
-            onClickHandler={handleClearPolygon}
+            onClickHandler={handleClearPolygon(dispatch)}
           />
         )}
         <ChoseBtn
           disabled={isCitiesDisabled}
-          onClick={handleMapOpen(setIsCityOpen, isCitiesDisabled)}
+          onClick={openModal(setIsCityOpen, isCitiesDisabled)}
         >
           <Text>Выбрать город</Text>
           <ChevronIcon />
@@ -76,12 +57,12 @@ const Location = () => {
         {data?.city?.id && (
           <BadgesGroup
             text={data?.city?.name}
-            onClickHandler={handleClearCity}
+            onClickHandler={handleClearCity(dispatch)}
           />
         )}
         <ChoseBtn
           disabled={!data?.city?.id || isDistrictsDisabled}
-          onClick={handleMapOpen(
+          onClick={openModal(
             setIsDistrictOpen,
             !data?.city?.id || isDistrictsDisabled
           )}
@@ -93,12 +74,12 @@ const Location = () => {
           <BadgesGroup
             text={data?.districts[0]?.name}
             quantity={data?.districts.length}
-            onClickHandler={handleClearDistricts}
+            onClickHandler={handleClearDistricts(dispatch)}
           />
         )}
         <ChoseBtn
           disabled={!data?.city?.id || isMetrosDisabled}
-          onClick={handleMapOpen(
+          onClick={openModal(
             setIsMetroOpen,
             !data?.city?.id || isMetrosDisabled
           )}
