@@ -23,7 +23,6 @@
     "@types/styled-components": "^5.1.26",
     "axios": "^1.2.1",
     "http-proxy-middleware": "^2.0.6",
-    "immer": "^9.0.16",
     "mapbox-gl": "^2.11.1",
     "next": "13.0.7",
     "next-redux-wrapper": "^8.0.0",

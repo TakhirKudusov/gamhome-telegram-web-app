@@ -14,9 +14,7 @@ export const parametersApi = createApi({
     >({
       query: (id) => `parameters/${id}`,
       transformResponse: (
-        baseQueryReturnValue: ParametersData,
-        meta,
-        arg
+        baseQueryReturnValue: ParametersData
       ): FormattedParametersData => {
         return getFormattedParams(baseQueryReturnValue).sort((a, b) =>
           b.type.localeCompare(a.type)

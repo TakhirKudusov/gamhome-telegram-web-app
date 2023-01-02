@@ -2,15 +2,12 @@ import styled from "styled-components";
 import { useAppDispatch, useAppSelector } from "../../../redux/utils/hooks";
 import { TFormData } from "../../../redux/slicers/types";
 import { clearFormData } from "../../../redux/slicers/formDataSlicer";
+import { handlePushClick } from "./helpers";
 
 const SaveButton = () => {
   const { data } = useAppSelector<TFormData>((state) => state.formData);
 
   const dispatch = useAppDispatch();
-
-  const handlePushClick = () => {
-    console.log(data);
-  };
 
   const handleClearClick = () => {
     dispatch(clearFormData());
@@ -20,7 +17,7 @@ const SaveButton = () => {
     <Container>
       <ShadowContainer />
       <BtnContainer>
-        <SendBtn onClick={handlePushClick}>Отправить</SendBtn>
+        <SendBtn onClick={handlePushClick(data)}>Отправить</SendBtn>
         <ClearBtn onClick={handleClearClick}>Сбросить</ClearBtn>
       </BtnContainer>
     </Container>

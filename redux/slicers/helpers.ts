@@ -1,9 +1,8 @@
 import { FieldAction, TFormData } from "./types";
-import { WritableDraft } from "immer/src/types/types-external";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 
 const handleNumFormat = (
-  state: WritableDraft<TFormData>,
+  state: any,
   action: FieldAction,
   maxNum: number,
   maxVar: string,
@@ -46,10 +45,7 @@ const handleNumFormat = (
   }
 };
 
-const handleSetPrimitiveField = (
-  state: WritableDraft<TFormData>,
-  action: FieldAction
-) => {
+const handleSetPrimitiveField = (state: any, action: FieldAction) => {
   if (action.payload.name === "category") {
     state.data.params = {
       repair: null,
@@ -105,10 +101,7 @@ const handleSetPrimitiveField = (
   state.data[action.payload.name] = action.payload.value as any;
 };
 
-const handleSetComplexField = (
-  state: WritableDraft<TFormData>,
-  action: FieldAction
-) => {
+const handleSetComplexField = (state: any, action: FieldAction) => {
   let isExist = false;
 
   for (
@@ -134,10 +127,7 @@ const handleSetComplexField = (
   }
 };
 
-const handleSetParamInput = (
-  state: WritableDraft<TFormData>,
-  action: FieldAction
-) => {
+const handleSetParamInput = (state: any, action: FieldAction) => {
   if (action.payload.name.toLowerCase().includes("floor")) {
     handleNumFormat(state, action, 50, "50", true);
     return;
@@ -157,7 +147,7 @@ const handleSetParamInput = (
   (state.data.params as any)[action.payload.name] = action.payload.value;
 };
 
-const handleClearData = (state: WritableDraft<TFormData>) => {
+const handleClearData = (state: any) => {
   state.data = {
     city: {
       name: "",
@@ -205,16 +195,13 @@ const handleClearData = (state: WritableDraft<TFormData>) => {
   };
 };
 
-const handleErrorFetch = (
-  state: WritableDraft<TFormData>,
-  action: FieldAction
-) => {
+const handleErrorFetch = (state: any, action: FieldAction) => {
   state.isError = true;
   state.isLoading = false;
   console.error(action.payload);
 };
 
-const handlePendingFetch = (state: WritableDraft<TFormData>) => {
+const handlePendingFetch = (state: any) => {
   state.isError = false;
   state.isLoading = true;
 };

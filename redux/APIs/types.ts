@@ -22,4 +22,4 @@ type ParametersData = Parameter[];
 
 type FormattedParametersData = Required<Parameter>[];
 
-export type { ParametersData, FormattedParametersData, Parameter };
+export type { ParametersData, FormattedParametersData, Parameter, Param };
