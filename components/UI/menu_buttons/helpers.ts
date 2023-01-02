@@ -100,7 +100,6 @@ const handlePushClick = (data: TFormData["data"]) => () => {
     fee: data.fee,
     parameters: formatParameters(data.params, data.category),
   };
-  console.log(newData);
 };
 
 export { handlePushClick };
