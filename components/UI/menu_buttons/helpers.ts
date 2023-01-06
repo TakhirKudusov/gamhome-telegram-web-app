@@ -99,7 +99,15 @@ const handlePushClick = (data: TFormData["data"]) => () => {
     maxKmMetro: reduceSpaces(data.maxKmMetro),
     fee: data.fee,
     parameters: formatParameters(data.params, data.category),
+    polygons: data.polygon ?? "",
   };
+  if (typeof window?.Telegram !== "undefined") {
+    try {
+      window?.Telegram.WebApp.sendData(JSON.stringify(newData));
+    } catch (error) {
+      console.error(error);
+    }
+  }
 };
 
 export { handlePushClick };

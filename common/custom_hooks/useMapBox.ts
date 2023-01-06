@@ -90,6 +90,11 @@ const updateArea = (dispatch: AppDispatch, draw: MapboxDraw) => (e: any) => {
   }
 };
 
+const addUtils = (map: mapboxgl.Map) => {
+  addNavigation(map);
+  addGeoLocate(map);
+};
+
 const useMapBox = (dispatch: AppDispatch): any => {
   const [draw, setDraw] = useState<any | null>(null);
   const [map, setMap] = useState<any | null>(null);
@@ -98,6 +103,8 @@ const useMapBox = (dispatch: AppDispatch): any => {
     "pk.eyJ1IjoidGFraGlya3VkdXNvdiIsImEiOiJjbDJ5eGNtcGUwNTQ1M2ptcWNvdWIwcDBlIn0.Nr0AAp96Ep_eXrbKkyjCOw";
 
   const init = async () => {
+    let errorInit = true;
+
     if (navigator?.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async ({ coords: { latitude, longitude } }) => {
@@ -106,8 +113,7 @@ const useMapBox = (dispatch: AppDispatch): any => {
           const map = initMap(results, latitude, longitude);
           const draw = initDraw();
 
-          addNavigation(map);
-          addGeoLocate(map);
+          addUtils(map);
 
           map.addControl(draw, "top-right");
 
@@ -119,8 +125,31 @@ const useMapBox = (dispatch: AppDispatch): any => {
           map.on("draw.update", updateArea(dispatch, draw));
 
           dispatch(setEnabled("isMapDisabled"));
+          errorInit = false;
         }
       );
+    }
+    if (errorInit) {
+      const map = new mapboxgl.Map({
+        container: "map",
+        style: "mapbox://styles/mapbox/streets-v12",
+        center: [37.61556, 55.75222],
+        zoom: 12,
+      });
+      const draw = initDraw();
+
+      addUtils(map);
+
+      map.addControl(draw, "top-right");
+
+      setMap(map);
+      setDraw(draw);
+
+      map.on("draw.create", updateArea(dispatch, draw));
+      map.on("draw.delete", updateArea(dispatch, draw));
+      map.on("draw.update", updateArea(dispatch, draw));
+
+      dispatch(setEnabled("isMapDisabled"));
     }
   };
 

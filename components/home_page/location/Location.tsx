@@ -41,12 +41,12 @@ const Location = () => {
           <Text>Нарисовать на карте</Text>
           <ChevronIcon />
         </ChoseBtn>
-        {data.polygon && (
-          <BadgesGroup
-            text={`Количество выделенных областей: ${data.polygon?.features.length}`}
-            onClickHandler={handleClearPolygon(dispatch)}
-          />
-        )}
+        <BadgesGroup
+          text={`Количество выделенных областей: ${
+            data.polygon?.features.length ?? 0
+          }`}
+          onClickHandler={handleClearPolygon(dispatch)}
+        />
         <ChoseBtn
           disabled={isCitiesDisabled}
           onClick={openModal(setIsCityOpen, isCitiesDisabled)}

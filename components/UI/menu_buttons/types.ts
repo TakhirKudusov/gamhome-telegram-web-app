@@ -30,6 +30,7 @@ type PostData = {
   minKmMetro: number;
   maxKmMetro: number;
   fee: boolean;
+  polygons: any;
 };
 
 export type { PostData, Parameter };
