@@ -96,8 +96,8 @@ const addUtils = (map: mapboxgl.Map) => {
 };
 
 const useMapBox = (dispatch: AppDispatch): any => {
-  const [draw, setDraw] = useState<any | null>(null);
-  const [map, setMap] = useState<any | null>(null);
+  const [draw, setDraw] = useState<MapboxDraw | null>(null);
+  const [map, setMap] = useState<mapboxgl.Map | null>(null);
 
   mapboxgl.accessToken =
     "pk.eyJ1IjoidGFraGlya3VkdXNvdiIsImEiOiJjbDJ5eGNtcGUwNTQ1M2ptcWNvdWIwcDBlIn0.Nr0AAp96Ep_eXrbKkyjCOw";

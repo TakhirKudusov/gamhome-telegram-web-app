@@ -36,7 +36,9 @@ const CityItem: FC<Props> = ({ data, mode, type }) => {
 
   return (
     <Container>
-      <AreaRow onClickHandler={handleSetDataPoint(dispatch, type, data)}>
+      <AreaRow
+        onClickHandler={handleSetDataPoint(dispatch, type, data, false, true)}
+      >
         <Text>{data?.name}</Text>
         {type === "districts" && <CheckBox>{checked && <DoneIcon />}</CheckBox>}
       </AreaRow>

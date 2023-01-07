@@ -12,6 +12,7 @@ import {
   setPrimitiveField,
 } from "../../../redux/slicers/formDataSlicer";
 import { AppDispatch } from "../../../redux/utils/types";
+import { isBooleanObject } from "util/types";
 
 const setActive = (
   setActive: Dispatch<SetStateAction<boolean>>,
@@ -99,16 +100,19 @@ const handleSetDataPoint =
     dispatch: AppDispatch,
     type: "cities" | "districts" | "metros",
     data: Cities | Metros | Params | undefined,
-    isMetroChild?: boolean
+    isMetroChild?: boolean,
+    isCityParent?: boolean
   ) =>
   () => {
-    if (type === "cities") {
+    if (type === "cities" && !isCityParent) {
       dispatch(
         setPrimitiveField({
           name: "city",
           value: { id: data?.id, name: data?.name },
         })
       );
+      dispatch(setPrimitiveField({ name: "districts", value: [] }));
+      dispatch(setPrimitiveField({ name: "metros", value: [] }));
     }
     if (type === "districts") {
       handleSetComplexField(dispatch, type, data);

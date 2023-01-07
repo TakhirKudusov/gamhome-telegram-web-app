@@ -30,6 +30,12 @@ const Map = () => {
     if (!mounted) setMounted(true);
   }, [polygon]);
 
+  useEffect(() => {
+    if (polygon && draw && mounted) {
+      draw.add(polygon);
+    }
+  }, [polygon, draw]);
+
   const handleReturnClick = () => {
     setIsMapOpen!(false);
   };

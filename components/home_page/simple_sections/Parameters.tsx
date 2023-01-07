@@ -54,19 +54,19 @@ const Parameters = () => {
     if (params?.repair) {
       setActiveParams(repairRefsArr.refs, params?.repair);
     }
-  }, [params?.repair]);
+  }, [params?.repair, data]);
 
   useEffect(() => {
     if (params?.houseType) {
       setActiveParams(houseTypeRefsArr.refs, params?.houseType);
     }
-  }, [params?.houseType]);
+  }, [params?.houseType, data]);
 
   useEffect(() => {
     if (params?.wallMaterial) {
       setActiveParams(wallMaterialRefsArr.refs, params?.wallMaterial);
     }
-  }, [params?.wallMaterial]);
+  }, [params?.wallMaterial, data]);
 
   return (
     <ParametersContainer>

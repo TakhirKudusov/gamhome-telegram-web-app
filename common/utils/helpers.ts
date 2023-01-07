@@ -5,9 +5,9 @@ const setActiveParams = (
   value: number | string | null | undefined
 ) => {
   for (let i = 0; i < refs.length; i++) {
-    (refs[i].ref?.current as HTMLDivElement).classList.remove("active");
+    (refs[i].ref?.current as HTMLDivElement)?.classList.remove("active");
     if (refs[i].ref?.current && refs[i].value === value) {
-      (refs[i].ref?.current as HTMLDivElement).classList.add("active");
+      (refs[i].ref?.current as HTMLDivElement)?.classList.add("active");
     }
   }
 };

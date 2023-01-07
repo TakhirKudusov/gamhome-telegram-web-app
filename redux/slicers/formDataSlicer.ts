@@ -10,7 +10,6 @@ import {
   handleSetParamInput,
   handleSetPrimitiveField,
 } from "./helpers";
-import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 
 export const fetchCitiesData = createAsyncThunk<{ data: City[] }>(
   "formData/fetchCitiesData",
@@ -90,6 +89,9 @@ const formDataSlicer = createSlice({
     clearFormData(state) {
       handleClearData(state);
     },
+    setFormData(state, action) {
+      state.data = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -111,6 +113,7 @@ export const {
   setComplexField,
   clearFormData,
   setParamInput,
+  setFormData,
 } = formDataSlicer.actions;
 
 export default formDataSlicer.reducer;

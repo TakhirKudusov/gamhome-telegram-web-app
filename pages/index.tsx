@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../redux/utils/hooks";
 import { TFormData } from "../redux/slicers/types";
 import { setActiveParams } from "../common/utils/helpers";
@@ -14,6 +14,7 @@ import Map from "../components/home_page/location/Map";
 import Location from "../components/home_page/location/Location";
 import {
   fetchCitiesData,
+  setFormData,
   setPrimitiveField,
 } from "../redux/slicers/formDataSlicer";
 import { AppContext } from "../common/context/AppContext";
@@ -53,12 +54,12 @@ const Home = () => {
       "isDistrictsDisabled",
       dispatch
     ),
-    [data.city]
+    [data.city, citiesData]
   );
 
   const metros = useMemo(
     handleGetData(data, citiesData, "metroLines", "isMetrosDisabled", dispatch),
-    [data.city]
+    [data.city, citiesData]
   );
 
   const categoryRefsArr = useGetRefs(categoryValues, RefType.CATEGORY);
@@ -66,8 +67,10 @@ const Home = () => {
   const authorArr = useGetRefs(authorValues, RefType.AUTHOR);
 
   useEffect(() => {
-    dispatch(setPrimitiveField({ name: "districts", value: [] }));
-    dispatch(setPrimitiveField({ name: "metros", value: [] }));
+    if (!data.city.id) {
+      dispatch(setPrimitiveField({ name: "districts", value: [] }));
+      dispatch(setPrimitiveField({ name: "metros", value: [] }));
+    }
   }, [data.city]);
 
   useEffect(() => {
@@ -78,6 +81,12 @@ const Home = () => {
 
   useEffect(() => {
     dispatch(fetchCitiesData());
+
+    const prevData = localStorage.getItem("formData");
+
+    if (prevData) {
+      dispatch(setFormData(JSON.parse(prevData)));
+    }
   }, []);
 
   useEffect(() => {

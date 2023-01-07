@@ -3,6 +3,7 @@ import { TFormData } from "../../../redux/slicers/types";
 import { Parameter, PostData } from "./types";
 import { parametersKeys } from "../../../common/utils/constants";
 import { AddParameters } from "../../../common/utils/types";
+import { AppDispatch } from "../../../redux/utils/types";
 
 const formatComplexData = (arr: Params[]) => {
   return arr.reduce(
@@ -76,6 +77,8 @@ const formatParameters = (
   return paramsArr;
 };
 
+type WindowTg = Window & typeof globalThis & { Telegram: any };
+
 const handlePushClick = (data: TFormData["data"]) => () => {
   const newData: PostData = {
     isAgent: data.isAgent,
@@ -101,9 +104,12 @@ const handlePushClick = (data: TFormData["data"]) => () => {
     parameters: formatParameters(data.params, data.category),
     polygons: data.polygon ?? "",
   };
-  if (typeof window?.Telegram !== "undefined") {
+
+  localStorage.setItem("formData", JSON.stringify(data));
+
+  if (typeof (window as WindowTg)?.Telegram !== "undefined") {
     try {
-      window?.Telegram.WebApp.sendData(JSON.stringify(newData));
+      (window as WindowTg)?.Telegram.WebApp.sendData(JSON.stringify(newData));
     } catch (error) {
       console.error(error);
     }
